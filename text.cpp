@@ -37,4 +37,35 @@ char* text_reader(FILE* file, const char* name_of_file)
     return text;
 }
 
+struct string* begin_of_str_position(char* text, const int SIZE_SYMBOLS, int* SIZE_LINES)
+{
+    *SIZE_LINES = num_of_lines(text);
+    struct string* pos_and_len = (struct string*)calloc(*SIZE_LINES+1, sizeof(struct string));
 
+    if(pos_and_len == nullptr)
+    {
+        printf("I can't numeric strings(((\n");
+        return nullptr;
+    }
+
+    int cur_position = 0;
+    pos_and_len -> position = text;
+    int i = 1;
+    int str_len = 0;
+
+    for( ; cur_position < SIZE_SYMBOLS && i < *SIZE_LINES; cur_position++, str_len++)
+    {
+        if(*(text + cur_position) != '\0')
+            continue;
+
+        pos_and_len[i].position = text + cur_position + 1;
+        pos_and_len[i-1].length = str_len;
+        i++;
+
+        str_len = 0;
+    }
+        pos_and_len[i].length = SIZE_SYMBOLS - cur_position;
+
+
+    return pos_and_len;
+}
