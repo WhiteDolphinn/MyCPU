@@ -1,14 +1,20 @@
 #ifndef MY_ASSEMBLER_H
 #define MY_ASSEMBLER_H
 
-#define MAX_COMMAND_LENGHT 15
+#define MAX_COMMAND_LENGTH 15
+#define NUM_OF_COMMANDS 10
 
-enum commands{
-
-
-
+struct command{
+    const char* name;
+    unsigned int code;
     };
 
+enum comm{
+    ERROR = 0xDED00DED,
+    PUSH = 1,
+    OUT = 2
+};
+
 char* convertor(struct string* strings, int num_of_lines, int num_of_symbols);
-int is_any_command(char* ptr);
+int what_command(char* ptr, char* text_asm, struct command* commands);
 #endif

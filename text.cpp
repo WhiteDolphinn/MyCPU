@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
+#include "text.h"
 
 int num_of_symbols(const char* name_of_file)
 {
@@ -11,6 +12,18 @@ int num_of_symbols(const char* name_of_file)
         return -1;
 
     return st.st_size;
+}
+
+int num_of_lines(char* text)
+{
+    char* cur_position = nullptr;
+    int i = 0;
+    for(cur_position = strchr(text, '\n'); cur_position != nullptr; cur_position = strchr(cur_position + 1, '\n'), i++)
+    {
+        *cur_position = '\0';
+        *(cur_position-1) = '\n';
+    }
+    return i+1;
 }
 
 char* text_reader(FILE* file, const char* name_of_file)
@@ -68,4 +81,13 @@ struct string* begin_of_str_position(char* text, const int SIZE_SYMBOLS, int* SI
 
 
     return pos_and_len;
+}
+
+void text_writer(FILE* file, struct string* strings, int n)
+{
+    for(int i = 0; i < n; i++)
+    {
+            fprintf(file, "%s", strings[i].position);
+    }
+
 }

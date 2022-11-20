@@ -1,30 +1,50 @@
 #include <string.h>
 #include <stdlib.h>
-#include "text.h
+#include "text.h"
 #include "my_assembler.h"
 
-char* convertor(char* text, struct string* strings, int num_of_lines, int num_of_symbols)
+char* convertor( struct string* strings, int num_of_lines, int num_of_symbols)
 {
-    char* ptr = text;
-    char* text_asm = calloc(num_of_symbols(num_of_symbols), sizeof(char));
+    struct command commands[NUM_OF_COMMANDS] = {};
+    commands[PUSH] = {.name = "push", .code = 1};
+    commands[OUT] = {.name = "out", .code = 2};
 
+    char* ptr = strings[0].position; //text
+    char* text_asm = (char*)calloc(num_of_symbols, sizeof(char));
 
-    while(is_any_command(ptr))
+    int comm_code = what_command(ptr, text_asm, commands);
+    for(int i = 0; i < num_of_lines && comm_code != ERROR; i++)
     {
+        ptr = strings[i].position;
 
-        strncpy(text_asm, ptr, ptr - );
-        change_str("1", "push", strlen("1"), strlen("push"));
+        strcat(text_asm, commands[comm_code].name);
+
+        if(comm_code == PUSH)
+            if(!strcmp(ptr+strlen(commands[comm_code].name), ""))
+                strcat(text_asm, ptr+strlen(commands[comm_code].name));
+            else
+                strcat(text_asm, "ERROR_IN_PUSH!!!");
+
+        comm_code = what_command(ptr, text_asm, commands);
     }
-
     return text_asm;
 }
 
-int is_any_command()
+int what_command(char* ptr, char* text_asm, struct command* commands)
 {
+    char word[MAX_COMMAND_LENGTH];
 
+    if(sscanf(ptr, "%s", word) == 0)
+        return ERROR;
+
+    for(int i = 1; i < NUM_OF_COMMANDS; i++)
+        if(!strcmp(word, commands[i].name))
+            return commands[i].code;
+
+    return 0;
 }
 
-void change_str(const char* code, const char* name, int code_len, int name_len)
+/*void command_to_num(int num_of_command, char* text_asm)
 {
-
-}
+    strcat(text_asm, num_of_command);
+}*/
