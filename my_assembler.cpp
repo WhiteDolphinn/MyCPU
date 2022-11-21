@@ -12,6 +12,7 @@ char* convertor( struct string* strings, int num_of_lines, int num_of_symbols)
     char* ptr = strings[0].position; //text
     //printf("%d", num_of_symbols);
     char* text_asm = (char*)calloc(num_of_symbols, sizeof(char));
+    char* text_position = text_asm;
 
     int comm_code = what_command(ptr, text_asm, commands);
     for(int i = 0; i < num_of_lines && comm_code != ERROR; i++)
@@ -21,6 +22,7 @@ char* convertor( struct string* strings, int num_of_lines, int num_of_symbols)
       //  strcat(text_asm, commands[comm_code].name);
         //strcat(text_asm, (char*)commands[comm_code].code);
         sprintf(text_asm, "%d", commands[comm_code].code);
+        text_position++;
 
         if(comm_code == PUSH)
             if(!strcmp(ptr+strlen(commands[comm_code].name), ""))
@@ -28,6 +30,7 @@ char* convertor( struct string* strings, int num_of_lines, int num_of_symbols)
             else
                 strcat(text_asm, "ERROR_IN_PUSH!!!");
 
+        strcat(text_asm, "\n");
         comm_code = what_command(ptr, text_asm, commands);
     }
     return text_asm;

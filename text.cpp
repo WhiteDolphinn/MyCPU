@@ -29,7 +29,7 @@ int num_of_lines(char* text)
 char* text_reader(FILE* file, const char* name_of_file)
 {
     const int SIZE = num_of_symbols(name_of_file);
-    printf("%d", SIZE);
+    //printf("%d", SIZE);
     char* text = (char*)calloc(SIZE+10, sizeof(char));
 
     if(text == nullptr)
