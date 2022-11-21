@@ -6,10 +6,11 @@
 char* convertor( struct string* strings, int num_of_lines, int num_of_symbols)
 {
     struct command commands[NUM_OF_COMMANDS] = {};
-    commands[PUSH] = {.name = "push", .code = 1};
-    commands[OUT] = {.name = "out", .code = 2};
+    commands[PUSH] = {.name = "push", .code = PUSH};
+    commands[OUT] = {.name = "out", .code = OUT};
 
     char* ptr = strings[0].position; //text
+    //printf("%d", num_of_symbols);
     char* text_asm = (char*)calloc(num_of_symbols, sizeof(char));
 
     int comm_code = what_command(ptr, text_asm, commands);
@@ -17,7 +18,9 @@ char* convertor( struct string* strings, int num_of_lines, int num_of_symbols)
     {
         ptr = strings[i].position;
 
-        strcat(text_asm, commands[comm_code].name);
+      //  strcat(text_asm, commands[comm_code].name);
+        //strcat(text_asm, (char*)commands[comm_code].code);
+        sprintf(text_asm, "%d", commands[comm_code].code);
 
         if(comm_code == PUSH)
             if(!strcmp(ptr+strlen(commands[comm_code].name), ""))
