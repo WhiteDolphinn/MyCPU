@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -31,7 +30,6 @@ int num_of_lines(char* text)
 char* text_reader(FILE* file, const char* name_of_file)
 {
     const int SIZE = num_of_symbols(name_of_file);
-    //printf("%d", SIZE);
     char* text = (char*)calloc(SIZE+10, sizeof(char));
 
     if(text == nullptr)
@@ -105,6 +103,5 @@ int stricmp(const char* source1, const char* source2)
     for(int i = 0; source2[i]; i++)
         lower_source2[i] = tolower(source2[i]);
 
-    printf("%s\n%s\n%d\n", lower_source1, lower_source2, strcmp(lower_source1, lower_source2));  //////////////
     return strcmp(lower_source1, lower_source2);
 }
