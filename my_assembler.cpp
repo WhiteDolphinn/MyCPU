@@ -19,13 +19,14 @@ bool convertor(FILE* file, struct string* strings, int num_of_lines, int* uncorr
         if(!stricmp(cmd_buffer, TO_STR(PUSH)))
         {
             fprintf(file, "%d", PUSH);
-            int arg = 0;
-            if(!sscanf(strings[i].position + strlen(TO_STR(PUSH)), " %d", &arg))
+            double arg_d = 0;
+            if(!sscanf(strings[i].position + strlen(TO_STR(PUSH)), " %lf", &arg_d))
             {
                 free(commands);
                 return false;
             }
-            fprintf(file, " %d", arg);
+            int arg_i = (int)(arg_d * 100);
+            fprintf(file, " %d", arg_i);
         }
         else if(!stricmp(cmd_buffer, TO_STR(OUT)))
         {
