@@ -28,8 +28,8 @@ const char *const CMD_NAME[] =
 };
 
 
-bool convertor(FILE* file, struct string* strings, int num_of_lines, int num_of_symbols);
-char* old_convertor(struct string* strings, int num_of_lines, int num_of_symbols);
-int what_command(char* ptr, char* text_asm, struct command* commands);
+bool convertor(FILE* file, struct string* strings, int num_of_lines, int* uncorrect_line);
+//char* old_convertor(struct string* strings, int num_of_lines, int num_of_symbols);
+//int what_command(char* ptr, char* text_asm, struct command* commands);
 #endif
 

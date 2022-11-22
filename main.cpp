@@ -18,8 +18,9 @@ int main()
     struct string* strings = begin_of_str_position(text, size_symbols, &num_of_lines);
 
     FILE* file_asm = fopen("test.code", "w");
-    if(!convertor(file_asm, strings, num_of_lines, size_symbols))
-        printf("Error!!!");
+    int uncorrect_line = 0;
+    if(!convertor(file_asm, strings, num_of_lines, &uncorrect_line))
+        fprintf(file_asm, "\n\nError in %d line!!!\n", uncorrect_line);
 
     fclose(file_asm);
     free(strings);
