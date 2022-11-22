@@ -5,7 +5,7 @@
 
 bool convertor(FILE* file, struct string* strings, int num_of_lines, int* uncorrect_line)
 {
-    struct command *commands = (struct command*)calloc(num_of_lines, sizeof(struct command));
+    struct command *commands = (struct command*)calloc(NUM_OF_COMMANDS, sizeof(struct command));
     commands[PUSH] = {.name = TO_STR(PUSH), .code = PUSH};
     commands[OUT] = {.name = TO_STR(OUT), .code = OUT};
 
@@ -43,8 +43,62 @@ bool convertor(FILE* file, struct string* strings, int num_of_lines, int* uncorr
         {
             fprintf(file, "%d", HLT);
             char symbol = '\0';
-            //printf("%d\n", strlen(TO_STR(HLT)));
             sscanf(strings[i].position + strlen(TO_STR(HLT)), " %c", &symbol);
+            if(symbol)
+            {
+                free(commands);
+                return false;
+            }
+        }
+        else if(!stricmp(cmd_buffer, TO_STR(POP)))
+        {
+            fprintf(file, "%d", POP);
+            char symbol = '\0';
+            sscanf(strings[i].position + strlen(TO_STR(POP)), " %c", &symbol);
+            if(symbol)
+            {
+                free(commands);
+                return false;
+            }
+        }
+        else if(!stricmp(cmd_buffer, TO_STR(SUM)))
+        {
+            fprintf(file, "%d", SUM);
+            char symbol = '\0';
+            sscanf(strings[i].position + strlen(TO_STR(SUM)), " %c", &symbol);
+            if(symbol)
+            {
+                free(commands);
+                return false;
+            }
+        }
+        else if(!stricmp(cmd_buffer, TO_STR(SUB)))
+        {
+            fprintf(file, "%d", SUB);
+            char symbol = '\0';
+            sscanf(strings[i].position + strlen(TO_STR(SUB)), " %c", &symbol);
+            if(symbol)
+            {
+                free(commands);
+                return false;
+            }
+        }
+        else if(!stricmp(cmd_buffer, TO_STR(MUL)))
+        {
+            fprintf(file, "%d", MUL);
+            char symbol = '\0';
+            sscanf(strings[i].position + strlen(TO_STR(MUL)), " %c", &symbol);
+            if(symbol)
+            {
+                free(commands);
+                return false;
+            }
+        }
+        else if(!stricmp(cmd_buffer, TO_STR(DIV)))
+        {
+            fprintf(file, "%d", DIV);
+            char symbol = '\0';
+            sscanf(strings[i].position + strlen(TO_STR(DIV)), " %c", &symbol);
             if(symbol)
             {
                 free(commands);
