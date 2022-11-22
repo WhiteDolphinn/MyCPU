@@ -3,7 +3,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <ctype.h>
 #include "text.h"
+
 
 int num_of_symbols(const char* name_of_file)
 {
@@ -91,4 +93,18 @@ void text_writer(FILE* file, struct string* strings, int n)
             fprintf(file, "%s", strings[i].position);
     }
 
+}
+
+int stricmp(const char* source1, const char* source2)
+{
+    char lower_source1[MAX_STR_LENGTH] = "";
+    for(int i = 0; source1[i]; i++)
+        lower_source1[i] = tolower(source1[i]);
+
+    char lower_source2[MAX_STR_LENGTH] = "";
+    for(int i = 0; source2[i]; i++)
+        lower_source2[i] = tolower(source2[i]);
+
+    printf("%s\n%s\n%d\n", lower_source1, lower_source2, strcmp(lower_source1, lower_source2));  //////////////
+    return strcmp(lower_source1, lower_source2);
 }
