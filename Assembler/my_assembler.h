@@ -8,10 +8,10 @@
 #define NUM_OF_COMMANDS 10
 #define TO_STR(VAL) #VAL
 
-struct command {
+/*struct command {
     const char* name;
     unsigned int code;
-    };
+    };*/
 
 enum cmd{
     HLT = 0,

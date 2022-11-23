@@ -5,10 +5,6 @@
 
 bool convertor(FILE* file, struct string* strings, int num_of_lines, int* uncorrect_line)
 {
-    struct command *commands = (struct command*)calloc(NUM_OF_COMMANDS, sizeof(struct command));
-    commands[PUSH] = {.name = TO_STR(PUSH), .code = PUSH};
-    commands[OUT] = {.name = TO_STR(OUT), .code = OUT};
-
     for (int i = 0; i < num_of_lines - 1; i++)
     {
         *uncorrect_line = i + 1;
@@ -21,11 +17,9 @@ bool convertor(FILE* file, struct string* strings, int num_of_lines, int* uncorr
             fprintf(file, "%d", PUSH);
             double arg_d = 0;
             if(!sscanf(strings[i].position + strlen(TO_STR(PUSH)), " %lf", &arg_d))
-            {
-                free(commands);
                 return false;
-            }
-            int arg_i = (int)(arg_d * 100);
+
+            int arg_i = (int)(arg_d * 100 + 0.5);
             fprintf(file, " %d", arg_i);
         }
         else if(!stricmp(cmd_buffer, TO_STR(OUT)))
@@ -35,10 +29,7 @@ bool convertor(FILE* file, struct string* strings, int num_of_lines, int* uncorr
             sscanf(strings[i].position + strlen(TO_STR(OUT)), " %c", &symbol);
             //printf("%d\n", symbol);
             if(symbol)
-            {
-                free(commands);
                 return false;
-            }
         }
         else if(!stricmp(cmd_buffer, TO_STR(HLT)))
         {
@@ -46,10 +37,7 @@ bool convertor(FILE* file, struct string* strings, int num_of_lines, int* uncorr
             char symbol = '\0';
             sscanf(strings[i].position + strlen(TO_STR(HLT)), " %c", &symbol);
             if(symbol)
-            {
-                free(commands);
                 return false;
-            }
         }
         else if(!stricmp(cmd_buffer, TO_STR(POP)))
         {
@@ -57,10 +45,7 @@ bool convertor(FILE* file, struct string* strings, int num_of_lines, int* uncorr
             char symbol = '\0';
             sscanf(strings[i].position + strlen(TO_STR(POP)), " %c", &symbol);
             if(symbol)
-            {
-                free(commands);
                 return false;
-            }
         }
         else if(!stricmp(cmd_buffer, TO_STR(SUM)))
         {
@@ -68,10 +53,7 @@ bool convertor(FILE* file, struct string* strings, int num_of_lines, int* uncorr
             char symbol = '\0';
             sscanf(strings[i].position + strlen(TO_STR(SUM)), " %c", &symbol);
             if(symbol)
-            {
-                free(commands);
                 return false;
-            }
         }
         else if(!stricmp(cmd_buffer, TO_STR(SUB)))
         {
@@ -79,10 +61,7 @@ bool convertor(FILE* file, struct string* strings, int num_of_lines, int* uncorr
             char symbol = '\0';
             sscanf(strings[i].position + strlen(TO_STR(SUB)), " %c", &symbol);
             if(symbol)
-            {
-                free(commands);
                 return false;
-            }
         }
         else if(!stricmp(cmd_buffer, TO_STR(MUL)))
         {
@@ -90,10 +69,7 @@ bool convertor(FILE* file, struct string* strings, int num_of_lines, int* uncorr
             char symbol = '\0';
             sscanf(strings[i].position + strlen(TO_STR(MUL)), " %c", &symbol);
             if(symbol)
-            {
-                free(commands);
                 return false;
-            }
         }
         else if(!stricmp(cmd_buffer, TO_STR(DIV)))
         {
@@ -101,19 +77,14 @@ bool convertor(FILE* file, struct string* strings, int num_of_lines, int* uncorr
             char symbol = '\0';
             sscanf(strings[i].position + strlen(TO_STR(DIV)), " %c", &symbol);
             if(symbol)
-            {
-                free(commands);
                 return false;
-            }
         }
         else
-        {
-            free(commands);
             return false;
-        }
+
         fprintf(file, "\n");
     }
-    free(commands);
+
     return true;
 }
 
