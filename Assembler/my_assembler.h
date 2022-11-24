@@ -24,8 +24,6 @@ enum cmd{
     DIV = 7,
 };
 
-bool convertor(FILE* file, struct string* strings, int num_of_lines, int* uncorrect_line);
-//char* old_convertor(struct string* strings, int num_of_lines, int num_of_symbols);
-//int what_command(char* ptr, char* text_asm, struct command* commands);
+bool convertor(FILE* file_txt, FILE* file_bin, struct string* strings, int num_of_lines, int* uncorrect_line);
 #endif
 

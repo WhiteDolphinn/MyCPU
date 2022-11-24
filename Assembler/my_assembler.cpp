@@ -3,135 +3,78 @@
 #include "text.h"
 #include "my_assembler.h"
 
-bool convertor(FILE* file, struct string* strings, int num_of_lines, int* uncorrect_line)
+#define PARSE_CMD(COMMAND, CODE)\
+    do{\
+        if(!stricmp(COMMAND, TO_STR(PUSH)))\
+            CODE = PUSH;\
+        if(!stricmp(COMMAND, TO_STR(HLT)))\
+            CODE = HLT;\
+        if(!stricmp(COMMAND, TO_STR(OUT)))\
+            CODE = OUT;\
+        if(!stricmp(COMMAND, TO_STR(POP)))\
+            CODE = POP;\
+        if(!stricmp(COMMAND, TO_STR(SUM)))\
+            CODE = SUM;\
+        if(!stricmp(COMMAND, TO_STR(SUB)))\
+            CODE = SUB;\
+        if(!stricmp(COMMAND, TO_STR(MUL)))\
+            CODE = MUL;\
+        if(!stricmp(COMMAND, TO_STR(DIV)))\
+            CODE = DIV;\
+    }while(0)\
+
+bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_of_lines, int* uncorrect_line)
 {
+    int data_bin[num_of_lines * 2];
+    int cur_data_position = 0;
+
     for (int i = 0; i < num_of_lines - 1; i++)
     {
         *uncorrect_line = i + 1;
         char cmd_buffer[MAX_STR_LENGTH] = "";
 
         sscanf(strings[i].position, " %14s", cmd_buffer);
+        int code_buffer = ERROR;
+        PARSE_CMD(cmd_buffer, code_buffer);
 
-        if(!stricmp(cmd_buffer, TO_STR(PUSH)))
+        switch(code_buffer)
         {
-            fprintf(file, "%d", PUSH);
-            double arg_d = 0;
-            if(!sscanf(strings[i].position + strlen(TO_STR(PUSH)), " %lf", &arg_d))
-                return false;
+            case PUSH:  //1 argument command
+            {
+                double arg_d = 0;
+                if(!sscanf(strings[i].position + strlen(TO_STR(PUSH)), " %lf", &arg_d))
+                    return false;
 
-            int arg_i = (int)(arg_d * 100 + 0.5);
-            fprintf(file, " %d", arg_i);
-        }
-        else if(!stricmp(cmd_buffer, TO_STR(OUT)))
-        {
-            fprintf(file, "%d", OUT);
-            char symbol = '\0';
-            sscanf(strings[i].position + strlen(TO_STR(OUT)), " %c", &symbol);
-            //printf("%d\n", symbol);
-            if(symbol)
-                return false;
-        }
-        else if(!stricmp(cmd_buffer, TO_STR(HLT)))
-        {
-            fprintf(file, "%d", HLT);
-            char symbol = '\0';
-            sscanf(strings[i].position + strlen(TO_STR(HLT)), " %c", &symbol);
-            if(symbol)
-                return false;
-        }
-        else if(!stricmp(cmd_buffer, TO_STR(POP)))
-        {
-            fprintf(file, "%d", POP);
-            char symbol = '\0';
-            sscanf(strings[i].position + strlen(TO_STR(POP)), " %c", &symbol);
-            if(symbol)
-                return false;
-        }
-        else if(!stricmp(cmd_buffer, TO_STR(SUM)))
-        {
-            fprintf(file, "%d", SUM);
-            char symbol = '\0';
-            sscanf(strings[i].position + strlen(TO_STR(SUM)), " %c", &symbol);
-            if(symbol)
-                return false;
-        }
-        else if(!stricmp(cmd_buffer, TO_STR(SUB)))
-        {
-            fprintf(file, "%d", SUB);
-            char symbol = '\0';
-            sscanf(strings[i].position + strlen(TO_STR(SUB)), " %c", &symbol);
-            if(symbol)
-                return false;
-        }
-        else if(!stricmp(cmd_buffer, TO_STR(MUL)))
-        {
-            fprintf(file, "%d", MUL);
-            char symbol = '\0';
-            sscanf(strings[i].position + strlen(TO_STR(MUL)), " %c", &symbol);
-            if(symbol)
-                return false;
-        }
-        else if(!stricmp(cmd_buffer, TO_STR(DIV)))
-        {
-            fprintf(file, "%d", DIV);
-            char symbol = '\0';
-            sscanf(strings[i].position + strlen(TO_STR(DIV)), " %c", &symbol);
-            if(symbol)
-                return false;
-        }
-        else
-            return false;
+                int arg_i = (int)(arg_d * 100 + 0.5);
 
-        fprintf(file, "\n");
+                fprintf(file_txt, "%d", PUSH);
+                data_bin[cur_data_position++] = PUSH;
+                data_bin[cur_data_position++] = arg_i;
+                fprintf(file_txt, " %d", arg_i);
+            }
+            break;
+
+            case HLT: case OUT: case POP: case SUM: case SUB: case MUL: case DIV: //0 argument command
+            {
+                fprintf(file_txt, "%d", code_buffer);
+                char symbol = '\0';
+                sscanf(strings[i].position + strlen(cmd_buffer), " %c", &symbol);
+
+                if(symbol)
+                    return false;
+
+                data_bin[cur_data_position++] = code_buffer;
+            }
+            break;
+
+            default:
+                return false;
+        }
+
+        fprintf(file_txt, "\n");
     }
+
+    fwrite(data_bin, sizeof(int), cur_data_position, file_bin);
 
     return true;
 }
-
-/*int what_command(char* ptr, char* text_asm, struct command* commands)
-{
-    char word[MAX_STR_LENGTH];
-
-    if(sscanf(ptr, "%s", word) == 0)
-        return ERROR;
-
-    for(int i = 1; i < NUM_OF_COMMANDS; i++)
-        if(!strcmp(word, commands[i].name))
-            return commands[i].code;
-
-    return 0;
-}*/
-
-/*char* old_convertor(struct string* strings, int num_of_lines, int num_of_symbols)
-{
-    struct command* commands = (struct command*)calloc(num_of_lines, sizeof(struct command));
-    commands[PUSH] = {.name = TO_STR(PUSH), .code = PUSH};
-    commands[OUT] = {.name = TO_STR(OUT), .code = OUT};
-
-
-
-    char* ptr = strings[0].position; //text
-    char* text_asm = (char*)calloc(num_of_symbols, sizeof(char));
-
-    int comm_code = what_command(ptr, text_asm, commands);
-    for(int i = 0; i < num_of_lines && comm_code != ERROR; i++)
-    {
-        ptr = strings[i].position;
-
-      //  strcat(text_asm, commands[comm_code].name);
-        //strcat(text_asm, (char*)commands[comm_code].code);
-       // sprintf(text_asm, "%d", commands[comm_code].code);
-        //text_position++;
-        text_asm[i] = commands[comm_code].code;
-
-        if(comm_code == PUSH)
-            if(!strcmp(ptr+strlen(commands[comm_code].name), ""))
-                strcat(text_asm, ptr+strlen(commands[comm_code].name));
-            else
-                strcat(text_asm, "ERROR_IN_PUSH!!!");
-
-        strcat(text_asm, "\n");
-        comm_code = what_command(ptr, text_asm, commands);
-    }
-    return text_asm;
-}*/

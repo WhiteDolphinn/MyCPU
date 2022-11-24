@@ -30,12 +30,14 @@ int main(int argc, const char* argv[])
     int num_of_lines = 0;
     struct string* strings = begin_of_str_position(text, size_symbols, &num_of_lines);
 
-    FILE* file_asm = fopen("Assembler/test.code", "w");
+    FILE* file_asm_txt = fopen("Assembler/test.code", "w");
+    FILE* file_asm_bin = fopen("Assembler/test.bin", "wb");
     int uncorrect_line = 0;
-    if(!convertor(file_asm, strings, num_of_lines, &uncorrect_line))
-        fprintf(file_asm, "\n\nError in %d line!!!\n", uncorrect_line);
+    if(!convertor(file_asm_txt, file_asm_bin,  strings, num_of_lines, &uncorrect_line))
+        printf("\n\nError in %d line!!!\n", uncorrect_line);
 
-    fclose(file_asm);
+    fclose(file_asm_txt);
+    fclose(file_asm_bin);
     free(strings);
     free(text);
 
