@@ -3,7 +3,7 @@
 #include "text.h"
 #include "my_assembler.h"
 
-#define PARSE_CMD(COMMAND, CODE)\
+#define GET_CMD_CODE(COMMAND, CODE)\
     do{\
         if(!stricmp(COMMAND, TO_STR(PUSH)))\
             CODE = PUSH;\
@@ -35,7 +35,7 @@ bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_
 
         sscanf(strings[i].position, " %14s", cmd_buffer);
         int code_buffer = ERROR;
-        PARSE_CMD(cmd_buffer, code_buffer);
+        GET_CMD_CODE(cmd_buffer, code_buffer);
 
         switch(code_buffer)
         {
