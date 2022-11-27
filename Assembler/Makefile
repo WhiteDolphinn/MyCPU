@@ -2,3 +2,4 @@
 A =  -Wall -Wextra -lasan -fsanitize=address,leak -g
 all:
 	@g++ Assembler/main.cpp Assembler/text.cpp Assembler/my_assembler.cpp $(A)
+#make -f Assembler/Makefile
