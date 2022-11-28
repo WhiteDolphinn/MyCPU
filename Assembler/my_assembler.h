@@ -25,5 +25,6 @@ enum cmd{
 };
 
 bool convertor(FILE* file_txt, FILE* file_bin, struct string* strings, int num_of_lines, int* uncorrect_line);
+bool is_empty_string(const char* str);
 #endif
 

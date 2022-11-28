@@ -25,7 +25,7 @@
 
 bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_of_lines, int* uncorrect_line)
 {
-    int data_bin[num_of_lines * 2];
+    int data_bin[num_of_lines * 2] = {};/////
     int cur_data_position = 0;
 
     for (int i = 0; i < num_of_lines - 1; i++)
@@ -34,6 +34,12 @@ bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_
         char cmd_buffer[MAX_STR_LENGTH] = "";
 
         sscanf(strings[i].position, " %14s", cmd_buffer);
+
+    if(is_empty_string(cmd_buffer))
+    {
+        fprintf(file_txt, "\n");
+        continue;
+    }
         int code_buffer = ERROR;
         GET_CMD_CODE(cmd_buffer, code_buffer);
 
@@ -77,4 +83,12 @@ bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_
     fwrite(data_bin, sizeof(int), cur_data_position, file_bin);
 
     return true;
+}
+
+bool is_empty_string(const char* str)
+{
+    if(*str == '\0')
+        return true;
+    else
+        return false;
 }

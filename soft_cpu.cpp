@@ -13,6 +13,13 @@ int* read_source_file(const char* name_of_source_file)
 {
     FILE* source_file = fopen(name_of_source_file, "rb");
 
+    if(source_file == nullptr)
+    {
+        printf("I can't open file: <%s>", name_of_source_file);
+        fclose(source_file);
+        return nullptr;
+    }
+
     int* commands = (int*)calloc(num_of_symbols(name_of_source_file), sizeof(int));
     fread(commands, sizeof(int), num_of_symbols(name_of_source_file), source_file);
 
@@ -20,7 +27,7 @@ int* read_source_file(const char* name_of_source_file)
     return commands;
 }
 
-void execute_cmds(struct stack* stack,int* commands)
+void execute_cmds(struct stack* stack, int* commands)
 {
     for(int i = 0; ; i++)
     {
@@ -32,8 +39,7 @@ void execute_cmds(struct stack* stack,int* commands)
 
             case OUT:
             {
-                STACK_DUMP(stack);
-                //stack_dump(get_log_file() ,stack, __FILE__, __LINE__, "stack_dump");
+                printf("%d\n", stack_pop(stack));
             }
             break;
 
