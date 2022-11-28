@@ -38,4 +38,5 @@ void help()
 {
     printf("You should write name of file after the ./a.out\n");
     printf("./a.out \"name_of_source_file\"\n");
+    printf("Assembler/test.bin (default)\n");
 }

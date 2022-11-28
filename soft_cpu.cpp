@@ -49,7 +49,7 @@ void execute_cmds(struct stack* stack, int* commands)
             }
             break;
 
-            case SUM:
+            case ADD:
                 stack_add(stack);
             break;
 

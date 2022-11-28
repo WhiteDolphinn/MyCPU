@@ -18,7 +18,7 @@ enum cmd{
     PUSH = 1,
     OUT = 2,
     POP = 3,
-    SUM = 4,
+    ADD = 4,
     SUB = 5,
     MUL = 6,
     DIV = 7,

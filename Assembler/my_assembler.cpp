@@ -13,8 +13,8 @@
             CODE = OUT;\
         if(!stricmp(COMMAND, TO_STR(POP)))\
             CODE = POP;\
-        if(!stricmp(COMMAND, TO_STR(SUM)))\
-            CODE = SUM;\
+        if(!stricmp(COMMAND, TO_STR(ADD)))\
+            CODE = ADD;\
         if(!stricmp(COMMAND, TO_STR(SUB)))\
             CODE = SUB;\
         if(!stricmp(COMMAND, TO_STR(MUL)))\
@@ -60,7 +60,7 @@ bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_
             }
             break;
 
-            case HLT: case OUT: case POP: case SUM: case SUB: case MUL: case DIV: //0 argument command
+            case HLT: case OUT: case POP: case ADD: case SUB: case MUL: case DIV: //0 argument command
             {
                 fprintf(file_txt, "%d", code_buffer);
                 char symbol = '\0';
