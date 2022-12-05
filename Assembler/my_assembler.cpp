@@ -21,9 +21,11 @@
             CODE = MUL;\
         if(!stricmp(COMMAND, TO_STR(DIV)))\
             CODE = DIV;\
+        if(!stricmp(COMMAND, TO_STR(JMP)))\
+            CODE = JMP;\
     }while(0)\
 
-bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_of_lines, int* uncorrect_line)
+bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_of_lines, int* uncorrect_line, int* link_positions)
 {
     int data_bin[num_of_lines * 2] = {};/////
     int cur_data_position = 0;
@@ -36,6 +38,12 @@ bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_
         sscanf(strings[i].position, " %14s", cmd_buffer);
 
     if(is_empty_string(cmd_buffer))
+    {
+        fprintf(file_txt, "\n");
+        continue;
+    }
+
+    if(is_link_string(cmd_buffer))
     {
         fprintf(file_txt, "\n");
         continue;
@@ -57,6 +65,35 @@ bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_
                 data_bin[cur_data_position++] = PUSH;
                 data_bin[cur_data_position++] = arg_i;
                 fprintf(file_txt, " %d", arg_i);
+            }
+            break;
+
+            case JMP:
+            {
+                int position = 0;
+                bool is_link = false;
+                char first_symbol = '\0';
+                sscanf(strings[i].position + strlen(TO_STR(JMP)), " %c", &first_symbol);
+
+                if(first_symbol == ':')
+                    is_link = true;
+               // printf("vsovm");
+                if(!sscanf(strings[i].position + strlen(TO_STR(JMP)), "%d", &position))
+                    return false;
+//error here
+                fprintf(file_txt, "%d", JMP);
+                data_bin[cur_data_position++] = JMP;
+
+                if(is_link)
+                {
+                    position = link_positions[position];
+
+                    if(position == -1)
+                        return false;
+                }
+
+                data_bin[cur_data_position++] = position;
+                fprintf(file_txt, " %d", position);
             }
             break;
 
@@ -88,6 +125,48 @@ bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_
 bool is_empty_string(const char* str)
 {
     if(*str == '\0')
+        return true;
+    else
+        return false;
+}
+
+int link_convertor(int position, int* link_positions)
+{
+    return link_positions[position];
+}
+
+int* check_links(int* link_positions, struct string* strings, int num_of_lines)
+{
+   // int link_positions[NUM_OF_LINKS] = {};
+
+    for(int i = 0; i < NUM_OF_LINKS; i++)
+        link_positions[i] = -1;
+
+    for(int i = 0; i < num_of_lines; i++)
+    {
+        char first_symbol = '\0';
+        int link_num = 0;
+
+        sscanf(strings[i].position, " %c", &first_symbol);
+
+        if(first_symbol == ':')
+        {
+            if(sscanf((strings[i].position) + 1, "%d", &link_num) == 1)
+                link_positions[link_num] = i + 1; //или i
+            else
+            {
+                printf("Error in %d line!!!", i+1);
+                free(link_positions);
+                return nullptr;
+            }
+        }
+    }
+    return link_positions;
+}
+
+bool is_link_string(const char* str)
+{
+    if(*str == ':')
         return true;
     else
         return false;
