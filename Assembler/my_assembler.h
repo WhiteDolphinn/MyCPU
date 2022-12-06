@@ -5,7 +5,7 @@
 //#define MAX_COMMAND_LENGTH 15
 //#define MAX_STR_LENGTH 15
 #define ERROR 0xDED00DED
-#define NUM_OF_COMMANDS 10
+#define NUM_OF_COMMANDS 20
 #define NUM_OF_LINKS 5
 #define TO_STR(VAL) #VAL
 
@@ -24,6 +24,12 @@ enum cmd{
     MUL = 6,
     DIV = 7,
     JMP = 8,
+    JB = 9,
+    JBE = 10,
+    JA = 11,
+    JAE = 12,
+    JE = 13,
+    JNE = 14,
 };
 
 bool convertor(FILE* file_txt, FILE* file_bin, struct string* strings, int num_of_lines, int* uncorrect_line, int* link_positions);

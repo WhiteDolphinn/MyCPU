@@ -23,6 +23,18 @@
             CODE = DIV;\
         if(!stricmp(COMMAND, TO_STR(JMP)))\
             CODE = JMP;\
+        if(!stricmp(COMMAND, TO_STR(JB)))\
+            CODE = JB;\
+        if(!stricmp(COMMAND, TO_STR(JBE)))\
+            CODE = JBE;\
+        if(!stricmp(COMMAND, TO_STR(JA)))\
+            CODE = JA;\
+        if(!stricmp(COMMAND, TO_STR(JAE)))\
+            CODE = JAE;\
+        if(!stricmp(COMMAND, TO_STR(JE)))\
+            CODE = JE;\
+        if(!stricmp(COMMAND, TO_STR(JNE)))\
+            CODE = JNE;\
     }while(0)\
 
 bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_of_lines, int* uncorrect_line, int* link_positions)
@@ -68,25 +80,25 @@ bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_
             }
             break;
 
-            case JMP:
+            case JMP: case JB: case JBE: case JA: case JAE: case JE: case JNE:
             {
                 int position = 0;
                 bool is_link = false;
                 char first_symbol = '\0';
 
-                sscanf(strings[i].position + strlen(TO_STR(JMP)), " %c", &first_symbol);
+                sscanf(strings[i].position + strlen(cmd_buffer), " %c", &first_symbol);
 
                 if(first_symbol == ':')
                     is_link = true;
                 //printf("vsovm");
-                if(sscanf(strings[i].position + strlen(TO_STR(JMP)), " %c%d", &first_symbol, &position) != 2)
+                if(sscanf(strings[i].position + strlen(cmd_buffer), " %c%d", &first_symbol, &position) != 2)
                 {
                     //printf("%c %d\n", first_symbol, position);
                     return false;
                 }
 
-                fprintf(file_txt, "%d", JMP);
-                data_bin[cur_data_position++] = JMP;
+                fprintf(file_txt, "%d", code_buffer);
+                data_bin[cur_data_position++] = code_buffer;
 
                 if(is_link)
                 {
