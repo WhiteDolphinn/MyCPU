@@ -9,6 +9,8 @@
 #include "log.h"
 #include <assert.h>
 
+static int execute_jump(struct stack* stack, int* commands, int mode, int i);
+
 int* read_source_file(const char* name_of_source_file)
 {
     FILE* source_file = fopen(name_of_source_file, "rb");
@@ -39,7 +41,7 @@ void execute_cmds(struct stack* stack, int* commands)
 
             case OUT:
             {
-                printf("%d\n", stack_pop(stack));
+                printf("%d\n", stack_pop(stack) / 100);
             }
             break;
 
@@ -68,13 +70,9 @@ void execute_cmds(struct stack* stack, int* commands)
             case HLT:
                 return;
 
-            case JMP:
+            case JMP: case JB: case JBE: case JA: case JAE: case JE: case JNE:
             {
-                //int new_position = commands[i+1];
-                //printf("%d\n", new_position);
-                i = commands[i+1] - 1;
-
-               // printf("%d %d %d %d %d ", commands[i-2], commands[i-1], commands[i], commands[i+1], commands[i+2]);
+                i = execute_jump(stack, commands, commands[i], i);
             }
             break;
 
@@ -84,4 +82,68 @@ void execute_cmds(struct stack* stack, int* commands)
 
         }
     }
+}
+
+static int execute_jump(struct stack* stack, int* commands, int mode, int i)
+{
+    if(mode == JMP)
+        return commands[i+1] - 1;
+
+    element_t val1 = stack_pop(stack);
+    element_t val2 = stack_pop(stack);
+
+    i++;
+    int is_true_condition = -1;
+    switch(mode)
+    {
+        case JB:
+            if(val1 < val2)
+                is_true_condition = 1;
+            else
+                is_true_condition = 0;
+        break;
+
+        case JBE:
+            if(val1 <= val2)
+                is_true_condition = 1;
+            else
+                is_true_condition = 0;
+        break;
+
+        case JA:
+            if(val1 > val2)
+                is_true_condition = 1;
+            else
+                is_true_condition = 0;
+        break;
+
+        case JAE:
+            if(val1 >= val2)
+                is_true_condition = 1;
+            else
+                is_true_condition = 0;
+        break;
+
+        case JE:
+            if(val1 == val2)
+                is_true_condition = 1;
+            else
+                is_true_condition = 0;
+        break;
+
+        case JNE:
+            if(val1 != val2)
+                is_true_condition = 1;
+            else
+                is_true_condition = 0;
+        break;
+    }
+
+    if(is_true_condition == 1)
+        return commands[i] - 1;
+
+    if(is_true_condition == 0)
+        return i;
+
+    return -1;
 }
