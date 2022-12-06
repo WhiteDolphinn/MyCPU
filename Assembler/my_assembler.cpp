@@ -73,14 +73,18 @@ bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_
                 int position = 0;
                 bool is_link = false;
                 char first_symbol = '\0';
+
                 sscanf(strings[i].position + strlen(TO_STR(JMP)), " %c", &first_symbol);
 
                 if(first_symbol == ':')
                     is_link = true;
-               // printf("vsovm");
-                if(!sscanf(strings[i].position + strlen(TO_STR(JMP)), "%d", &position))
+                //printf("vsovm");
+                if(sscanf(strings[i].position + strlen(TO_STR(JMP)), " %c%d", &first_symbol, &position) != 2)
+                {
+                    //printf("%c %d\n", first_symbol, position);
                     return false;
-//error here
+                }
+
                 fprintf(file_txt, "%d", JMP);
                 data_bin[cur_data_position++] = JMP;
 
@@ -151,8 +155,11 @@ int* check_links(int* link_positions, struct string* strings, int num_of_lines)
 
         if(first_symbol == ':')
         {
-            if(sscanf((strings[i].position) + 1, "%d", &link_num) == 1)
+            if(sscanf(strings[i].position, " %c%d", &first_symbol, &link_num) == 2)
+            {
                 link_positions[link_num] = i + 1; //или i
+                //printf("link_positions[%d] = %d\n", link_num, i+1);
+            }
             else
             {
                 printf("Error in %d line!!!", i+1);
