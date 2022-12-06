@@ -34,14 +34,22 @@ int main(int argc, const char* argv[])
     FILE* file_asm_bin = fopen("Assembler/test.bin", "wb");
 
     int* link_positions = (int*)calloc(NUM_OF_LINKS, sizeof(int));
-    link_positions = check_links(link_positions, strings, num_of_lines);
+    //link_positions = check_links(link_positions, strings, num_of_lines);
 
+    int uncorrect_line = 0;
     if(link_positions != nullptr)
     {
-    int uncorrect_line = 0;
-    if(!convertor(file_asm_txt, file_asm_bin,  strings, num_of_lines, &uncorrect_line, link_positions))
+    if(!convertor(file_asm_txt, file_asm_bin,  strings, num_of_lines, &uncorrect_line, link_positions, 1))
         printf("\n\nError in %d line!!!\n", uncorrect_line);
     }
+
+    fclose(file_asm_txt);
+    fclose(file_asm_bin);
+    file_asm_txt = fopen("Assembler/test.code", "w");
+    file_asm_bin = fopen("Assembler/test.bin", "wb");
+
+    if(!convertor(file_asm_txt, file_asm_bin,  strings, num_of_lines, &uncorrect_line, link_positions, 2))
+        printf("\n\nError in %d line!!!\n", uncorrect_line);
 
     fclose(file_asm_txt);
     fclose(file_asm_bin);

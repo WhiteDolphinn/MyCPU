@@ -68,7 +68,18 @@ void execute_cmds(struct stack* stack, int* commands)
             case HLT:
                 return;
 
+            case JMP:
+            {
+                //int new_position = commands[i+1];
+                //printf("%d\n", new_position);
+                i = commands[i+1] - 1;
+
+               // printf("%d %d %d %d %d ", commands[i-2], commands[i-1], commands[i], commands[i+1], commands[i+2]);
+            }
+            break;
+
             default:
+                printf("Unknown command: %d\n", commands[i]);
                 assert(0);
 
         }

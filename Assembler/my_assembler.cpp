@@ -37,7 +37,7 @@
             CODE = JNE;\
     }while(0)\
 
-bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_of_lines, int* uncorrect_line, int* link_positions)
+bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_of_lines, int* uncorrect_line, int* link_positions, int mode)
 {
     int data_bin[num_of_lines * 2] = {};/////
     int cur_data_position = 0;
@@ -57,6 +57,9 @@ bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_
 
     if(is_link_string(cmd_buffer))
     {
+        int link_num = 0;
+        sscanf(cmd_buffer, " :%d", &link_num);
+        add_link(link_num, cur_data_position, link_positions);
         fprintf(file_txt, "\n");
         continue;
     }
@@ -104,8 +107,11 @@ bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_
                 {
                     position = link_positions[position];
 
-                    if(position == -1)
-                        return false;
+                    if(mode == 2)
+                    {
+                        if(position == -1)
+                            return false;
+                    }
                 }
 
                 data_bin[cur_data_position++] = position;
@@ -160,6 +166,7 @@ int* check_links(int* link_positions, struct string* strings, int num_of_lines)
 
     for(int i = 0; i < num_of_lines; i++)
     {
+        static int num_in_code = 0;
         char first_symbol = '\0';
         int link_num = 0;
 
@@ -169,7 +176,7 @@ int* check_links(int* link_positions, struct string* strings, int num_of_lines)
         {
             if(sscanf(strings[i].position, " %c%d", &first_symbol, &link_num) == 2)
             {
-                link_positions[link_num] = i + 1; //или i
+                link_positions[link_num] = num_in_code; //или i
                 //printf("link_positions[%d] = %d\n", link_num, i+1);
             }
             else
@@ -178,6 +185,11 @@ int* check_links(int* link_positions, struct string* strings, int num_of_lines)
                 free(link_positions);
                 return nullptr;
             }
+        }
+        else
+        {
+            //num_in_code += num_of_words(strings[i]);
+            printf("%d\n", num_in_code);
         }
     }
     return link_positions;
@@ -189,4 +201,9 @@ bool is_link_string(const char* str)
         return true;
     else
         return false;
+}
+
+void add_link(int link_num, int cur_data_position, int* link_positions)
+{
+    link_positions[link_num] = cur_data_position;
 }
