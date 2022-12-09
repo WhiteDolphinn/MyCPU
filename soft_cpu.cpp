@@ -30,7 +30,7 @@ int* read_source_file(const char* name_of_source_file)
 void start_cpu(struct cpu* cpu, int* commands)
 {
     for(int i = 0; i < REGISTER_COUNT; i++)
-        cpu->registers[i] = 0;
+        cpu->registers[i] = POISON;
 
     cpu->commands = commands;
 
@@ -47,6 +47,7 @@ void execute_cmds(struct cpu* cpu)
 {
     for(int i = 0; ; i++)
     {
+        print_cpu(cpu);
         switch(cpu->commands[i])
         {
             case PUSH:
@@ -90,7 +91,7 @@ void execute_cmds(struct cpu* cpu)
             case HLT:
                 return;
 
-            case JMP: case JB: case JBE: case JA: case JAE: case JE: case JNE:
+            case JMP: case JB: case JBE: case JA: case JAE: case JE: case JNE: case CALL: case RET:
             {
                 i = execute_jump(cpu, i);
             }
@@ -98,6 +99,7 @@ void execute_cmds(struct cpu* cpu)
 
             default:
                 printf("Unknown command: %d\n", cpu->commands[i]);
+                print_cpu(cpu);
                 return;
         }
     }
@@ -108,6 +110,15 @@ static int execute_jump(struct cpu* cpu, int i)
     int mode = cpu->commands[i];
     if(mode == JMP)
         return cpu->commands[i+1] - 1;
+
+    if(mode == CALL)
+    {
+        stack_push(&cpu->stk, i);
+        return cpu->commands[i+1] - 1;
+    }
+
+    if(mode == RET)
+        return stack_pop(&cpu->stk);
 
     element_t val1 = stack_pop(&cpu->stk);
     element_t val2 = stack_pop(&cpu->stk);
@@ -148,4 +159,16 @@ static int execute_jump(struct cpu* cpu, int i)
         return i;
 
     return -1;
+}
+
+void print_cpu(struct cpu* cpu)
+{
+    FILE* log_file = get_log_file();
+
+    fprintf(log_file, "****************************\n");
+    for(int i = 0; i < REGISTER_COUNT; i++)
+        if(cpu->registers[i] == POISON)
+            fprintf(log_file, "registers[%d] = %X\n", i, cpu->registers[i]);
+        else
+            fprintf(log_file, "registers[%d] = %d\n", i, cpu->registers[i]);
 }

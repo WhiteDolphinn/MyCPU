@@ -25,6 +25,8 @@ enum cmd{
     JNE = 14,
     PUSH_R = 15,
     POP_R = 16,
+    CALL = 17,
+    RET = 18, //NUM_OF_COMMANDS == 20
 };
 
 enum regist{
@@ -32,7 +34,7 @@ enum regist{
     BX = 1,
     CX = 2,
     DX = 3,
-    EX = 4,
+    EX = 4,     //NUM_OF_LINKS == 5
 };
 
 bool convertor(

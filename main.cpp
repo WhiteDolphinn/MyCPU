@@ -3,8 +3,9 @@
 #include "my_assembler.h"
 #include "text.h"
 #include "soft_cpu.h"
+#include "log.h"
 
-void help();
+static void help();
 
 int main(int argc, const char* argv[])
 {
@@ -23,11 +24,11 @@ int main(int argc, const char* argv[])
     execute_cmds(&cpu);
 
     stop_cpu(&cpu);
-
+    //close_log_file();
     return 0;
 }
 
-void help()
+static void help()
 {
     printf("You should write name of file after the ./a.out\n");
     printf("./a.out \"name_of_source_file\"\n");

@@ -35,7 +35,11 @@
             CODE = JE;                      \
         if(!stricmp(COMMAND, TO_STR(JNE)))  \
             CODE = JNE;                     \
-    }while(0)                               \
+        if(!stricmp(COMMAND, TO_STR(CALL)))  \
+            CODE = CALL;                     \
+        if(!stricmp(COMMAND, TO_STR(RET)))  \
+            CODE = RET;                     \
+    }while(0)
 
 #define GET_REGIST_CODE(COMMAND, CODE)      \
     do{                                     \
@@ -123,7 +127,7 @@ bool convertor(
             }
             break;
 
-            case JMP: case JB: case JBE: case JA: case JAE: case JE: case JNE:
+            case JMP: case JB: case JBE: case JA: case JAE: case JE: case JNE: case CALL:
             {
                 int position = 0;
                 bool is_link = false;
@@ -156,7 +160,7 @@ bool convertor(
             }
             break;
 
-            case HLT: case OUT: case POP: case ADD: case SUB: case MUL: case DIV: //0 argument command
+            case HLT: case OUT: case POP: case ADD: case SUB: case MUL: case DIV: case RET: //0 argument command
             {
                 fprintf(file_txt, "%d", code_buffer);
                 char symbol = '\0';
