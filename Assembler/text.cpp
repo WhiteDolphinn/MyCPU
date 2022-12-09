@@ -106,27 +106,3 @@ int stricmp(const char* source1, const char* source2)
     return strcmp(lower_source1, lower_source2);
 }
 
-/*int num_of_words(const char)
-{
-    int count = 0;
-    const char* str2 = string.position;
-    char word[15] = {};
-    char first_symbol = '\0';
-
-    for( ; str2 - string.position < string.length; count++)
-        if(sscanf(str2, " %s ", word))
-        {
-            sscanf(str2, " %c", &first_symbol);
-            printf("%c\n", first_symbol);
-            str2 += strlen(word);
-            continue;
-        }
-        else
-            break;
-    printf("\ncount = %d\n", count);
-
-
-    return count;
-}
-
-int fun(const char *string) {int count, offset; while (sscanf(string, " %*[ \t\n]%n", &offset) {++count; string+= offset} return count;}*/

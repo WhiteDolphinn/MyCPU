@@ -3,57 +3,69 @@
 #include "text.h"
 #include "my_assembler.h"
 
-#define GET_CMD_CODE(COMMAND, CODE)\
-    do{\
-        if(!stricmp(COMMAND, TO_STR(PUSH)))\
-            CODE = PUSH;\
-        if(!stricmp(COMMAND, TO_STR(HLT)))\
-            CODE = HLT;\
-        if(!stricmp(COMMAND, TO_STR(OUT)))\
-            CODE = OUT;\
-        if(!stricmp(COMMAND, TO_STR(POP)))\
-            CODE = POP;\
-        if(!stricmp(COMMAND, TO_STR(ADD)))\
-            CODE = ADD;\
-        if(!stricmp(COMMAND, TO_STR(SUB)))\
-            CODE = SUB;\
-        if(!stricmp(COMMAND, TO_STR(MUL)))\
-            CODE = MUL;\
-        if(!stricmp(COMMAND, TO_STR(DIV)))\
-            CODE = DIV;\
-        if(!stricmp(COMMAND, TO_STR(JMP)))\
-            CODE = JMP;\
-        if(!stricmp(COMMAND, TO_STR(JB)))\
-            CODE = JB;\
-        if(!stricmp(COMMAND, TO_STR(JBE)))\
-            CODE = JBE;\
-        if(!stricmp(COMMAND, TO_STR(JA)))\
-            CODE = JA;\
-        if(!stricmp(COMMAND, TO_STR(JAE)))\
-            CODE = JAE;\
-        if(!stricmp(COMMAND, TO_STR(JE)))\
-            CODE = JE;\
-        if(!stricmp(COMMAND, TO_STR(JNE)))\
-            CODE = JNE;\
-    }while(0)\
+#define GET_CMD_CODE(COMMAND, CODE)         \
+    do{                                     \
+        if(!stricmp(COMMAND, TO_STR(PUSH))) \
+            CODE = PUSH;                    \
+        if(!stricmp(COMMAND, TO_STR(HLT)))  \
+            CODE = HLT;                     \
+        if(!stricmp(COMMAND, TO_STR(OUT)))  \
+            CODE = OUT;                     \
+        if(!stricmp(COMMAND, TO_STR(POP)))  \
+            CODE = POP;                     \
+        if(!stricmp(COMMAND, TO_STR(ADD)))  \
+            CODE = ADD;                     \
+        if(!stricmp(COMMAND, TO_STR(SUB)))  \
+            CODE = SUB;                     \
+        if(!stricmp(COMMAND, TO_STR(MUL)))  \
+            CODE = MUL;                     \
+        if(!stricmp(COMMAND, TO_STR(DIV)))  \
+            CODE = DIV;                     \
+        if(!stricmp(COMMAND, TO_STR(JMP)))  \
+            CODE = JMP;                     \
+        if(!stricmp(COMMAND, TO_STR(JB)))   \
+            CODE = JB;                      \
+        if(!stricmp(COMMAND, TO_STR(JBE)))  \
+            CODE = JBE;                     \
+        if(!stricmp(COMMAND, TO_STR(JA)))   \
+            CODE = JA;                      \
+        if(!stricmp(COMMAND, TO_STR(JAE)))  \
+            CODE = JAE;                     \
+        if(!stricmp(COMMAND, TO_STR(JE)))   \
+            CODE = JE;                      \
+        if(!stricmp(COMMAND, TO_STR(JNE)))  \
+            CODE = JNE;                     \
+    }while(0)                               \
 
-#define GET_REGIST_CODE(COMMAND, CODE)\
-    do{\
-        if(!stricmp(COMMAND, TO_STR(AX)))\
-            CODE = AX;\
-        if(!stricmp(COMMAND, TO_STR(BX)))\
-            CODE = BX;\
-        if(!stricmp(COMMAND, TO_STR(CX)))\
-            CODE = CX;\
-        if(!stricmp(COMMAND, TO_STR(DX)))\
-            CODE = DX;\
-        if(!stricmp(COMMAND, TO_STR(EX)))\
-            CODE = EX;\
-    }while(0)\
+#define GET_REGIST_CODE(COMMAND, CODE)      \
+    do{                                     \
+        if(!stricmp(COMMAND, TO_STR(AX)))   \
+            CODE = AX;                      \
+        if(!stricmp(COMMAND, TO_STR(BX)))   \
+            CODE = BX;                      \
+        if(!stricmp(COMMAND, TO_STR(CX)))   \
+            CODE = CX;                      \
+        if(!stricmp(COMMAND, TO_STR(DX)))   \
+            CODE = DX;                      \
+        if(!stricmp(COMMAND, TO_STR(EX)))   \
+            CODE = EX;                      \
+    }while(0)                               \
 
+static bool is_empty_string(const char* str);
+static bool is_link_string(const char* str);
+static void add_link(int link_num, int cur_data_position, int* link_positions);
+static bool check_regist_command(const char* str, int* code_buffer, int* code_reg);
 static int reg_cmd(const char* buf_reg);
 
-bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_of_lines, int* uncorrect_line, int* link_positions, int mode)
+bool convertor(
+               FILE* file_txt,
+               FILE* file_bin,
+               struct string* strings,
+               int num_of_lines,
+               int* uncorrect_line,
+               int* link_positions,
+               int mode
+               )
 {
     int data_bin[num_of_lines * 2] = {};/////
     int cur_data_position = 0;
@@ -79,6 +91,7 @@ bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_
             fprintf(file_txt, "\n");
             continue;
         }
+
         int code_buffer = ERROR;
         GET_CMD_CODE(cmd_buffer, code_buffer);
 
@@ -120,12 +133,9 @@ bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_
 
                 if(first_symbol == ':')
                     is_link = true;
-                //printf("vsovm");
+
                 if(sscanf(strings[i].position + strlen(cmd_buffer), " %c%d", &first_symbol, &position) != 2)
-                {
-                    //printf("%c %d\n", first_symbol, position);
                     return false;
-                }
 
                 fprintf(file_txt, "%d", code_buffer);
                 data_bin[cur_data_position++] = code_buffer;
@@ -171,7 +181,7 @@ bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_
     return true;
 }
 
-bool is_empty_string(const char* str)
+static bool is_empty_string(const char* str)
 {
     if(*str == '\0')
         return true;
@@ -179,50 +189,7 @@ bool is_empty_string(const char* str)
         return false;
 }
 
-int link_convertor(int position, int* link_positions)
-{
-    return link_positions[position];
-}
-
-int* check_links(int* link_positions, struct string* strings, int num_of_lines)
-{
-   // int link_positions[NUM_OF_LINKS] = {};
-
-    for(int i = 0; i < NUM_OF_LINKS; i++)
-        link_positions[i] = -1;
-
-    for(int i = 0; i < num_of_lines; i++)
-    {
-        static int num_in_code = 0;
-        char first_symbol = '\0';
-        int link_num = 0;
-
-        sscanf(strings[i].position, " %c", &first_symbol);
-
-        if(first_symbol == ':')
-        {
-            if(sscanf(strings[i].position, " %c%d", &first_symbol, &link_num) == 2)
-            {
-                link_positions[link_num] = num_in_code; //или i
-                //printf("link_positions[%d] = %d\n", link_num, i+1);
-            }
-            else
-            {
-                printf("Error in %d line!!!", i+1);
-                free(link_positions);
-                return nullptr;
-            }
-        }
-        else
-        {
-            //num_in_code += num_of_words(strings[i]);
-            printf("%d\n", num_in_code);
-        }
-    }
-    return link_positions;
-}
-
-bool is_link_string(const char* str)
+static bool is_link_string(const char* str)
 {
     if(*str == ':')
         return true;
@@ -230,12 +197,12 @@ bool is_link_string(const char* str)
         return false;
 }
 
-void add_link(int link_num, int cur_data_position, int* link_positions)
+static void add_link(int link_num, int cur_data_position, int* link_positions)
 {
     link_positions[link_num] = cur_data_position;
 }
 
-bool check_regist_command(const char* str, int* code_buffer, int* code_reg)
+static bool check_regist_command(const char* str, int* code_buffer, int* code_reg)
 {
     char buf_cmd[MAX_STR_LENGTH] = {};
     char buf_reg[MAX_STR_LENGTH] = {};
