@@ -113,8 +113,9 @@ static int execute_jump(struct cpu* cpu, int i)
 
     if(mode == CALL)
     {
-        stack_push(&cpu->stk, i);
-        return cpu->commands[i+1] - 1;
+        stack_push(&cpu->stk, i+1);
+        i++;
+        return cpu->commands[i] - 1;
     }
 
     if(mode == RET)
