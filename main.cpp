@@ -22,15 +22,19 @@ int main(int argc, const char* argv[])
     const char* name_of_source_file = argv[1];
     int* commands = read_source_file(name_of_source_file);
 
+
     /*if(commands == nullptr)
         return 0;*/
 
-    struct stack stk;
-    stack_init(&stk);
-    execute_cmds(&stk, commands);
-    stack_delete(&stk);
+  //  struct stack stk;
+    struct cpu cpu;
+    start_cpu(&cpu, commands);
+   // stack_init(&stk);
+    execute_cmds(&cpu.stk, commands);
 
-    free(commands);
+    stop_cpu(&cpu);
+    //stack_delete(&stk);
+   // free(commands);
     return 0;
 }
 

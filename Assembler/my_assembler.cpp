@@ -37,6 +37,22 @@
             CODE = JNE;\
     }while(0)\
 
+#define GET_REGIST_CODE(COMMAND, CODE)\
+    do{\
+        if(!stricmp(COMMAND, TO_STR(AX)))\
+            CODE = AX;\
+        if(!stricmp(COMMAND, TO_STR(BX)))\
+            CODE = BX;\
+        if(!stricmp(COMMAND, TO_STR(CX)))\
+            CODE = CX;\
+        if(!stricmp(COMMAND, TO_STR(DX)))\
+            CODE = DX;\
+        if(!stricmp(COMMAND, TO_STR(EX)))\
+            CODE = EX;\
+    }while(0)\
+
+static int reg_cmd(const char* buf_reg);
+
 bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_of_lines, int* uncorrect_line, int* link_positions, int mode)
 {
     int data_bin[num_of_lines * 2] = {};/////
@@ -49,22 +65,33 @@ bool convertor(FILE* file_txt, FILE* file_bin,  struct string* strings, int num_
 
         sscanf(strings[i].position, " %14s", cmd_buffer);
 
-    if(is_empty_string(cmd_buffer))
-    {
-        fprintf(file_txt, "\n");
-        continue;
-    }
+        if(is_empty_string(cmd_buffer))
+        {
+            fprintf(file_txt, "\n");
+            continue;
+        }
 
-    if(is_link_string(cmd_buffer))
-    {
-        int link_num = 0;
-        sscanf(cmd_buffer, " :%d", &link_num);
-        add_link(link_num, cur_data_position, link_positions);
-        fprintf(file_txt, "\n");
-        continue;
-    }
+        if(is_link_string(cmd_buffer))
+        {
+            int link_num = 0;
+            sscanf(cmd_buffer, " :%d", &link_num);
+            add_link(link_num, cur_data_position, link_positions);
+            fprintf(file_txt, "\n");
+            continue;
+        }
         int code_buffer = ERROR;
         GET_CMD_CODE(cmd_buffer, code_buffer);
+
+        int arg_reg = ERROR;
+        if(code_buffer == PUSH || code_buffer == POP)
+            if(check_regist_command(strings[i].position, &code_buffer, &arg_reg))
+            {
+                fprintf(file_txt, "%d", code_buffer);
+                data_bin[cur_data_position++] = code_buffer;
+                data_bin[cur_data_position++] = arg_reg;
+                fprintf(file_txt, " %d\n", arg_reg);
+                continue;
+            }
 
         switch(code_buffer)
         {
@@ -206,4 +233,38 @@ bool is_link_string(const char* str)
 void add_link(int link_num, int cur_data_position, int* link_positions)
 {
     link_positions[link_num] = cur_data_position;
+}
+
+bool check_regist_command(const char* str, int* code_buffer, int* code_reg)
+{
+    char buf_cmd[MAX_STR_LENGTH] = {};
+    char buf_reg[MAX_STR_LENGTH] = {};
+
+    if(sscanf(str, "%s %s", buf_cmd, buf_reg) == 2)
+    {
+        *code_reg = reg_cmd(buf_reg);
+        if(*code_reg != -1)
+        {
+            switch(*code_buffer)
+            {
+                case PUSH:
+                *code_buffer = PUSH_R;
+                break;
+
+                case POP:
+                *code_buffer = POP_R;
+                break;
+            }
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static int reg_cmd(const char* buf_reg)
+{
+    int cmd_code = -1;
+    GET_REGIST_CODE(buf_reg, cmd_code);
+    return cmd_code;
 }

@@ -2,7 +2,6 @@
 #include "soft_cpu.h"
 #include "my_assembler.h"
 #include "text.h"
-#include "stack.h"
 #include "maths.h"
 #include "errors.h"
 #include "stack_check.h"
@@ -27,6 +26,22 @@ int* read_source_file(const char* name_of_source_file)
 
     fclose(source_file);
     return commands;
+}
+
+void start_cpu(struct cpu* cpu, int* commands)
+{
+    for(int i = 0; i < REGISTER_COUNT; i++)
+        cpu->registers[i] = 0;
+
+    cpu->commands = commands;
+
+    stack_init(&cpu->stk);
+}
+
+void stop_cpu(struct cpu* cpu)
+{
+    free(cpu->commands);
+    stack_delete(&cpu->stk);
 }
 
 void execute_cmds(struct stack* stack, int* commands)

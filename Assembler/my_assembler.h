@@ -30,6 +30,16 @@ enum cmd{
     JAE = 12,
     JE = 13,
     JNE = 14,
+    PUSH_R = 15,
+    POP_R = 16,
+};
+
+enum regist{
+    AX = 0,
+    BX = 1,
+    CX = 2,
+    DX = 3,
+    EX = 4,
 };
 
 bool convertor(FILE* file_txt, FILE* file_bin, struct string* strings, int num_of_lines, int* uncorrect_line, int* link_positions, int mode);
@@ -38,5 +48,6 @@ int link_convertor(int position, int* link_positions);
 int* check_links(int* link_positions, struct string* strings, int num_of_lines);
 bool is_link_string(const char* str);
 void add_link(int link_num, int cur_data_position, int* link_positions);
+bool check_regist_command(const char* str, int* code_buffer, int* code_reg);
 #endif
 
