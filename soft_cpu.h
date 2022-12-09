@@ -14,5 +14,5 @@ struct cpu{
 int* read_source_file(const char* name_of_source_file);
 void start_cpu(struct cpu* cpu, int* commands);
 void stop_cpu(struct cpu* cpu);
-void execute_cmds(struct stack* stack,int* commands);
+void execute_cmds(struct cpu* cpu);
 #endif

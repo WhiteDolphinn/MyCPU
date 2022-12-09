@@ -8,7 +8,7 @@
 #include "log.h"
 #include <assert.h>
 
-static int execute_jump(struct stack* stack, int* commands, int mode, int i);
+static int execute_jump(struct cpu* cpu, int i);
 
 int* read_source_file(const char* name_of_source_file)
 {
@@ -44,42 +44,42 @@ void stop_cpu(struct cpu* cpu)
     stack_delete(&cpu->stk);
 }
 
-void execute_cmds(struct stack* stack, int* commands)
+void execute_cmds(struct cpu* cpu)
 {
     for(int i = 0; ; i++)
     {
-        switch(commands[i])
+        switch(cpu->commands[i])
         {
             case PUSH:
-                stack_push(stack, commands[++i]);
+                stack_push(&cpu->stk, cpu->commands[++i]);
             break;
 
             case OUT:
             {
-                printf("%d\n", stack_pop(stack) / 100);
+                printf("%d\n", stack_pop(&cpu->stk) / 100);
             }
             break;
 
             case POP:
             {
-                element_t val = stack_pop(stack);
+                stack_pop(&cpu->stk);
             }
             break;
 
             case ADD:
-                stack_add(stack);
+                stack_add(&cpu->stk);
             break;
 
             case SUB:
-                stack_sub(stack);
+                stack_sub(&cpu->stk);
             break;
 
             case MUL:
-                stack_mul(stack);
+                stack_mul(&cpu->stk);
             break;
 
             case DIV:
-                stack_div(stack);
+                stack_div(&cpu->stk);
             break;
 
             case HLT:
@@ -87,75 +87,57 @@ void execute_cmds(struct stack* stack, int* commands)
 
             case JMP: case JB: case JBE: case JA: case JAE: case JE: case JNE:
             {
-                i = execute_jump(stack, commands, commands[i], i);
+                i = execute_jump(cpu, i);
             }
             break;
 
             default:
-                printf("Unknown command: %d\n", commands[i]);
-                assert(0);
-
+                printf("Unknown command: %d\n", cpu->commands[i]);
+                return;
         }
     }
 }
 
-static int execute_jump(struct stack* stack, int* commands, int mode, int i)
+static int execute_jump(struct cpu* cpu, int i)
 {
+    int mode = cpu->commands[i];
     if(mode == JMP)
-        return commands[i+1] - 1;
+        return cpu->commands[i+1] - 1;
 
-    element_t val1 = stack_pop(stack);
-    element_t val2 = stack_pop(stack);
+    element_t val1 = stack_pop(&cpu->stk);
+    element_t val2 = stack_pop(&cpu->stk);
 
     i++;
     int is_true_condition = -1;
     switch(mode)
     {
         case JB:
-            if(val1 < val2)
-                is_true_condition = 1;
-            else
-                is_true_condition = 0;
+            is_true_condition = val1 < val2;
         break;
 
         case JBE:
-            if(val1 <= val2)
-                is_true_condition = 1;
-            else
-                is_true_condition = 0;
+            is_true_condition = val1 <= val2;
         break;
 
         case JA:
-            if(val1 > val2)
-                is_true_condition = 1;
-            else
-                is_true_condition = 0;
+            is_true_condition = val1 > val2;
         break;
 
         case JAE:
-            if(val1 >= val2)
-                is_true_condition = 1;
-            else
-                is_true_condition = 0;
+            is_true_condition = val1 >= val2;
         break;
 
         case JE:
-            if(val1 == val2)
-                is_true_condition = 1;
-            else
-                is_true_condition = 0;
+            is_true_condition = val1 == val2;
         break;
 
         case JNE:
-            if(val1 != val2)
-                is_true_condition = 1;
-            else
-                is_true_condition = 0;
+            is_true_condition = val1 != val2;
         break;
     }
 
     if(is_true_condition == 1)
-        return commands[i] - 1;
+        return cpu->commands[i] - 1;
 
     if(is_true_condition == 0)
         return i;
