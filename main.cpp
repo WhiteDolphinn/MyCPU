@@ -3,11 +3,6 @@
 #include "my_assembler.h"
 #include "text.h"
 #include "soft_cpu.h"
-#include "stack.h"
-#include "stack_check.h"
-#include "maths.h"
-#include "errors.h"
-#include "log.h"
 
 void help();
 

@@ -6,7 +6,6 @@
 #include "errors.h"
 #include "stack_check.h"
 #include "log.h"
-#include <assert.h>
 
 static int execute_jump(struct cpu* cpu, int i);
 
@@ -54,6 +53,10 @@ void execute_cmds(struct cpu* cpu)
                 stack_push(&cpu->stk, cpu->commands[++i]);
             break;
 
+            case PUSH_R:
+                stack_push(&cpu->stk, cpu->registers[cpu->commands[++i]]);
+            break;
+
             case OUT:
             {
                 printf("%d\n", stack_pop(&cpu->stk) / 100);
@@ -61,9 +64,11 @@ void execute_cmds(struct cpu* cpu)
             break;
 
             case POP:
-            {
                 stack_pop(&cpu->stk);
-            }
+            break;
+
+            case POP_R:
+                cpu->registers[cpu->commands[++i]] = stack_pop(&cpu->stk);
             break;
 
             case ADD:
