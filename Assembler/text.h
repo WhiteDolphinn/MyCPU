@@ -2,7 +2,7 @@
 #define TEXT_H
 #include <stdio.h>
 
-#define MAX_STR_LENGTH 15
+#define MAX_STR_LENGTH 50
 
 struct string{
     char* position;

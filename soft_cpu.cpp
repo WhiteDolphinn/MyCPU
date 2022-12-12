@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include "soft_cpu.h"
-#include "my_assembler.h"
 #include "text.h"
 #include "maths.h"
 #include "errors.h"

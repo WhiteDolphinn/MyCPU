@@ -59,6 +59,7 @@ static bool is_link_string(const char* str);
 static void add_link(int link_num, int cur_data_position, int* link_positions);
 static bool check_regist_command(const char* str, int* code_buffer, int* code_reg);
 static int reg_cmd(const char* buf_reg);
+static void get_func_code(struct link* func, struct link* links, int* link_positions);
 
 bool convertor(
                FILE* file_txt,
@@ -77,6 +78,7 @@ bool convertor(
     {
         *uncorrect_line = i + 1;
         char cmd_buffer[MAX_STR_LENGTH] = "";
+        static struct link links[NUM_OF_LINKS] = {};
 
         sscanf(strings[i].position, " %14s", cmd_buffer);
 
@@ -94,12 +96,20 @@ bool convertor(
             fprintf(file_txt, "\n");
             continue;*/
             static int cur_link_num = 0;
-            static struct link links[NUM_OF_LINKS] = {};
+
 
             char link_name[MAX_STR_LENGTH] = "";
             sscanf(cmd_buffer, " :%s ", link_name);
-            links[cur_link_num++] = {.name = link_name, .code = cur_link_num};
+           // links[cur_link_num++] = {link_name, cur_link_num};
+          //  links[cur_link_num].name = link_name;
+            links[cur_link_num].code = cur_link_num;
+
+            for(int i = 0; link_name[i] != '\0'; i++)
+                links[cur_link_num].name[i] = link_name[i];
+
+            cur_link_num++;
             add_link(links[cur_link_num-1].code, cur_data_position, link_positions);
+            printf("%d = link_positions[%d] %d\n", link_positions[cur_link_num-1], cur_link_num-1, cur_data_position);
 
             fprintf(file_txt, "\n");
             continue;
@@ -138,7 +148,8 @@ bool convertor(
 
             case JMP: case JB: case JBE: case JA: case JAE: case JE: case JNE: case CALL:
             {
-                int position = 0;
+               // int position = 0;
+                struct link func = {};
                 bool is_link = false;
                 char first_symbol = '\0';
 
@@ -147,7 +158,10 @@ bool convertor(
                 if(first_symbol == ':')
                     is_link = true;
 
-                if(sscanf(strings[i].position + strlen(cmd_buffer), " %c%d", &first_symbol, &position) != 2)
+              /*  if(sscanf(strings[i].position + strlen(cmd_buffer), " %c%d", &first_symbol, &position) != 2)
+                    return false;*/
+
+                if(sscanf(strings[i].position + strlen(cmd_buffer), " %c%s", &first_symbol, func.name) != 2)
                     return false;
 
                 fprintf(file_txt, "%d", code_buffer);
@@ -155,17 +169,23 @@ bool convertor(
 
                 if(is_link)
                 {
-                    position = link_positions[position];
+                    get_func_code(&func, links, link_positions);
+                    printf("func.code = %d\n", func.code);
 
-                    if(mode == 2)
+                     if(mode == 2)
                     {
-                        if(position == -1)
+                        if(func.code == -1)
                             return false;
                     }
+
+                  //  printf("%d ", position);
+                  //  position = link_positions[position];///надо конвертнуть
+                  //  printf("%d\n", position);
+                 //   printf("link_positions[%d] = %d\n", position, link_positions[position]);
                 }
 
-                data_bin[cur_data_position++] = position;
-                fprintf(file_txt, " %d", position);
+                data_bin[cur_data_position++] = func.code;
+                fprintf(file_txt, " %d", func.code);
             }
             break;
 
@@ -247,4 +267,14 @@ static int reg_cmd(const char* buf_reg)
     int cmd_code = -1;
     GET_REGIST_CODE(buf_reg, cmd_code);
     return cmd_code;
+}
+
+static void get_func_code(struct link* func, struct link* links, int* link_positions)
+{
+    for(int i = 0; i < NUM_OF_LINKS; i++)
+        if(!stricmp(links[i].name, func->name))
+        {
+            func->code = link_positions[links[i].code];
+            return;
+        }
 }

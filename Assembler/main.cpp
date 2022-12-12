@@ -51,6 +51,9 @@ int main(int argc, const char* argv[])
 
     int* link_positions = (int*)calloc(NUM_OF_LINKS, sizeof(int));
 
+    /*for(int i = 0; i < NUM_OF_LINKS; i++)
+        link_positions[i] = -1;*/
+
     int uncorrect_line = 0;
     if(link_positions != nullptr)
     {

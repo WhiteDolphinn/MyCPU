@@ -2,6 +2,7 @@
 #define SOFT_CPU_H
 #include <stdio.h>
 #include "stack.h"
+#include "my_assembler.h"
 
 
 
