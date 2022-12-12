@@ -168,7 +168,7 @@ void print_cpu(struct cpu* cpu)
 
     fprintf(log_file, "****************************\n");
     for(int i = 0; i < REGISTER_COUNT; i++)
-        if(cpu->registers[i] == POISON)
+        if(cpu->registers[i] == (int)POISON)
             fprintf(log_file, "registers[%d] = %X\n", i, cpu->registers[i]);
         else
             fprintf(log_file, "registers[%d] = %d\n", i, cpu->registers[i]);

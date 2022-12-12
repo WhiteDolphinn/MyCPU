@@ -1,11 +1,18 @@
 #ifndef MY_ASSEMBLER_H
 #define MY_ASSEMBLER_H
 #include <stdio.h>
+#include "text.h"
 
 #define ERROR 0xDED00DED
 #define NUM_OF_COMMANDS 20
 #define NUM_OF_LINKS 5
+#define REGISTER_COUNT 5
 #define TO_STR(VAL) #VAL
+
+struct link{
+    char name[MAX_STR_LENGTH];
+    int code;
+};
 
 enum cmd{
     HLT = 0,
@@ -34,7 +41,7 @@ enum regist{
     BX = 1,
     CX = 2,
     DX = 3,
-    EX = 4,     //NUM_OF_LINKS == 5
+    EX = 4,     //REGISTER_COUNT == 5
 };
 
 bool convertor(

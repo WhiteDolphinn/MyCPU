@@ -1,6 +1,5 @@
 #include <string.h>
 #include <stdlib.h>
-#include "text.h"
 #include "my_assembler.h"
 
 #define GET_CMD_CODE(COMMAND, CODE)         \
@@ -89,9 +88,19 @@ bool convertor(
 
         if(is_link_string(cmd_buffer))
         {
-            int link_num = 0;
+            /*int link_num = 0;
             sscanf(cmd_buffer, " :%d", &link_num);
             add_link(link_num, cur_data_position, link_positions);
+            fprintf(file_txt, "\n");
+            continue;*/
+            static int cur_link_num = 0;
+            static struct link links[NUM_OF_LINKS] = {};
+
+            char link_name[MAX_STR_LENGTH] = "";
+            sscanf(cmd_buffer, " :%s ", link_name);
+            links[cur_link_num++] = {.name = link_name, .code = cur_link_num};
+            add_link(links[cur_link_num-1].code, cur_data_position, link_positions);
+
             fprintf(file_txt, "\n");
             continue;
         }

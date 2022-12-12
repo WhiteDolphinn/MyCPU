@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "stack.h"
 
-#define REGISTER_COUNT 5
+
 
 struct cpu{
     struct stack stk;
