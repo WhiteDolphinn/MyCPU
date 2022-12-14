@@ -59,7 +59,7 @@ void execute_cmds(struct cpu* cpu)
 
             case OUT:
             {
-                printf("%d\n", stack_pop(&cpu->stk) / 100);
+                printf("%.2lf\n", (double)stack_pop(&cpu->stk) / 100);
             }
             break;
 

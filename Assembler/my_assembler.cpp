@@ -137,7 +137,11 @@ bool convertor(
                 if(!sscanf(strings[i].position + strlen(TO_STR(PUSH)), " %lf", &arg_d))
                     return false;
 
-                int arg_i = (int)(arg_d * 100 + 0.5);
+                int arg_i = 0;
+                if(arg_d >= 0)
+                    arg_i = (int)(arg_d * 100 + 0.5);
+                else
+                    arg_i = (int)(arg_d * 100 - 0.5);
 
                 fprintf(file_txt, "%d", PUSH);
                 data_bin[cur_data_position++] = PUSH;

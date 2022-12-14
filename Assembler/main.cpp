@@ -9,10 +9,10 @@ void help();
 int main(int argc, const char* argv[])
 {
     const char* SOURCE_FILE_NAME = argv[1];
+    const char* BIN_FILE = argv[2];
     const char* TXT_FILE = "Assembler/test.code";
-    const char* BIN_FILE = "Assembler/test.bin";
 
-    if(argc != 2)
+    if(argc != 3)
     {
         help();
         return 0;
@@ -80,7 +80,6 @@ int main(int argc, const char* argv[])
 
 void help()
 {
-    printf("You should write name of file after the ./a.out\n");
-    printf("./a.out \"name_of_source_file\"\n");
-    printf("Assembler/test.asm (default)\n");
+    printf("a.out [NAME_OF_SOURCE_FILE] [NAME_OF_BIN_FILE]\n");
+    printf("a.out Assembler/test.asm Assembler/test.bin  (default)\n");
 }
