@@ -9,39 +9,32 @@
 #define REGISTER_COUNT 5
 #define TO_STR(VAL) #VAL
 
+#define EMIT(BUFF)                          \
+    fprintf(file_txt, "%d ", BUFF);         \
+    data_bin[cur_data_position++] = BUFF;
+
 struct link{
     char name[MAX_STR_LENGTH];
     int code;
 };
 
+#define DEFCMD(COMMAND, CODE)\
+    COMMAND = CODE,
+
 enum cmd{
-    HLT = 0,
-    PUSH = 1,
-    OUT = 2,
-    POP = 3,
-    ADD = 4,
-    SUB = 5,
-    MUL = 6,
-    DIV = 7,
-    JMP = 8,
-    JB = 9,
-    JBE = 10,
-    JA = 11,
-    JAE = 12,
-    JE = 13,
-    JNE = 14,
+    #include "get_command.h"
     PUSH_R = 15,
-    POP_R = 16,
-    CALL = 17,
-    RET = 18, //NUM_OF_COMMANDS == 20
+    POP_R = 16,         //NUM_OF_COMMANDS == 20
+    #undef DEFCMD
 };
 
+#define GETREG(REGIST, CODE)\
+    REGIST = CODE,
+
 enum regist{
-    AX = 0,
-    BX = 1,
-    CX = 2,
-    DX = 3,
-    EX = 4,     //REGISTER_COUNT == 5
+    #include "get_regist.h"
+    #undef GETREG
+     //REGISTER_COUNT == 5
 };
 
 bool convertor(

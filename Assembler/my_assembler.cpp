@@ -2,58 +2,6 @@
 #include <stdlib.h>
 #include "my_assembler.h"
 
-#define GET_CMD_CODE(COMMAND, CODE)         \
-    do{                                     \
-        if(!stricmp(COMMAND, TO_STR(PUSH))) \
-            CODE = PUSH;                    \
-        if(!stricmp(COMMAND, TO_STR(HLT)))  \
-            CODE = HLT;                     \
-        if(!stricmp(COMMAND, TO_STR(OUT)))  \
-            CODE = OUT;                     \
-        if(!stricmp(COMMAND, TO_STR(POP)))  \
-            CODE = POP;                     \
-        if(!stricmp(COMMAND, TO_STR(ADD)))  \
-            CODE = ADD;                     \
-        if(!stricmp(COMMAND, TO_STR(SUB)))  \
-            CODE = SUB;                     \
-        if(!stricmp(COMMAND, TO_STR(MUL)))  \
-            CODE = MUL;                     \
-        if(!stricmp(COMMAND, TO_STR(DIV)))  \
-            CODE = DIV;                     \
-        if(!stricmp(COMMAND, TO_STR(JMP)))  \
-            CODE = JMP;                     \
-        if(!stricmp(COMMAND, TO_STR(JB)))   \
-            CODE = JB;                      \
-        if(!stricmp(COMMAND, TO_STR(JBE)))  \
-            CODE = JBE;                     \
-        if(!stricmp(COMMAND, TO_STR(JA)))   \
-            CODE = JA;                      \
-        if(!stricmp(COMMAND, TO_STR(JAE)))  \
-            CODE = JAE;                     \
-        if(!stricmp(COMMAND, TO_STR(JE)))   \
-            CODE = JE;                      \
-        if(!stricmp(COMMAND, TO_STR(JNE)))  \
-            CODE = JNE;                     \
-        if(!stricmp(COMMAND, TO_STR(CALL)))  \
-            CODE = CALL;                     \
-        if(!stricmp(COMMAND, TO_STR(RET)))  \
-            CODE = RET;                     \
-    }while(0)
-
-#define GET_REGIST_CODE(COMMAND, CODE)      \
-    do{                                     \
-        if(!stricmp(COMMAND, TO_STR(AX)))   \
-            CODE = AX;                      \
-        if(!stricmp(COMMAND, TO_STR(BX)))   \
-            CODE = BX;                      \
-        if(!stricmp(COMMAND, TO_STR(CX)))   \
-            CODE = CX;                      \
-        if(!stricmp(COMMAND, TO_STR(DX)))   \
-            CODE = DX;                      \
-        if(!stricmp(COMMAND, TO_STR(EX)))   \
-            CODE = EX;                      \
-    }while(0)                               \
-
 static bool is_empty_string(const char* str);
 static bool is_link_string(const char* str);
 static void add_link(int link_num, int cur_data_position, int* link_positions);
@@ -115,8 +63,14 @@ bool convertor(
             continue;
         }
 
+        #define DEFCMD(COMMAND, CODE)                    \
+        if(!stricmp(cmd_buffer, TO_STR(COMMAND)))        \
+            code_buffer = COMMAND;
+
         int code_buffer = ERROR;
-        GET_CMD_CODE(cmd_buffer, code_buffer);
+        #include "get_command.h"
+        #undef DEFCMD
+
 
         int arg_reg = ERROR;
         if(code_buffer == PUSH || code_buffer == POP)
@@ -269,7 +223,14 @@ static bool check_regist_command(const char* str, int* code_buffer, int* code_re
 static int reg_cmd(const char* buf_reg)
 {
     int cmd_code = -1;
-    GET_REGIST_CODE(buf_reg, cmd_code);
+
+    #define GETREG(REGIST, CODE)           \
+        if(!stricmp(buf_reg, TO_STR(REGIST)))   \
+            cmd_code = REGIST;
+    #include "get_regist.h"
+
+    #undef GETREG
+
     return cmd_code;
 }
 

@@ -6,7 +6,7 @@
 #include "stack_check.h"
 #include "log.h"
 
-static int execute_jump(struct cpu* cpu, int i);
+static int execute_jump(struct cpu* cpu, int cmd_pos);
 
 int* read_source_file(const char* name_of_source_file)
 {
@@ -44,17 +44,17 @@ void stop_cpu(struct cpu* cpu)
 
 void execute_cmds(struct cpu* cpu)
 {
-    for(int i = 0; ; i++)
+    for(int cmd_pos = 0; ; cmd_pos++)
     {
         print_cpu(cpu);
-        switch(cpu->commands[i])
+        switch(cpu->commands[cmd_pos])
         {
             case PUSH:
-                stack_push(&cpu->stk, cpu->commands[++i]);
+                stack_push(&cpu->stk, cpu->commands[++cmd_pos]);
             break;
 
             case PUSH_R:
-                stack_push(&cpu->stk, cpu->registers[cpu->commands[++i]]);
+                stack_push(&cpu->stk, cpu->registers[cpu->commands[++cmd_pos]]);
             break;
 
             case OUT:
@@ -68,7 +68,7 @@ void execute_cmds(struct cpu* cpu)
             break;
 
             case POP_R:
-                cpu->registers[cpu->commands[++i]] = stack_pop(&cpu->stk);
+                cpu->registers[cpu->commands[++cmd_pos]] = stack_pop(&cpu->stk);
             break;
 
             case ADD:
@@ -92,29 +92,29 @@ void execute_cmds(struct cpu* cpu)
 
             case JMP: case JB: case JBE: case JA: case JAE: case JE: case JNE: case CALL: case RET:
             {
-                i = execute_jump(cpu, i);
+                cmd_pos = execute_jump(cpu, cmd_pos);
             }
             break;
 
             default:
-                printf("Unknown command: %d\n", cpu->commands[i]);
+                printf("Unknown command: %d\n", cpu->commands[cmd_pos]);
                 print_cpu(cpu);
                 return;
         }
     }
 }
 
-static int execute_jump(struct cpu* cpu, int i)
+static int execute_jump(struct cpu* cpu, int cmd_pos)
 {
-    int mode = cpu->commands[i];
+    int mode = cpu->commands[cmd_pos];
     if(mode == JMP)
-        return cpu->commands[i+1] - 1;
+        return cpu->commands[cmd_pos+1] - 1;
 
     if(mode == CALL)
     {
-        stack_push(&cpu->stk, i+1);
-        i++;
-        return cpu->commands[i] - 1;
+        stack_push(&cpu->stk, cmd_pos+1);
+        cmd_pos++;
+        return cpu->commands[cmd_pos] - 1;
     }
 
     if(mode == RET)
@@ -123,12 +123,12 @@ static int execute_jump(struct cpu* cpu, int i)
     element_t val1 = stack_pop(&cpu->stk);
     element_t val2 = stack_pop(&cpu->stk);
 
-    i++;
+    cmd_pos++;
     int is_true_condition = -1;
     switch(mode)
     {
         case JB:
-            is_true_condition = val1 < val2;
+            is_true_condition = (val1 < val2);
         break;
 
         case JBE:
@@ -153,10 +153,10 @@ static int execute_jump(struct cpu* cpu, int i)
     }
 
     if(is_true_condition == 1)
-        return cpu->commands[i] - 1;
+        return cpu->commands[cmd_pos] - 1;
 
     if(is_true_condition == 0)
-        return i;
+        return cmd_pos;
 
     return -1;
 }
