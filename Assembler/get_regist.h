@@ -1,0 +1,5 @@
+    GETREG(AX, 0)
+    GETREG(BX, 1)
+    GETREG(CX, 2)
+    GETREG(DX, 3)
+    GETREG(EX, 4)
