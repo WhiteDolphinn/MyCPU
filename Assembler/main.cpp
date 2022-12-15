@@ -1,10 +1,12 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include "text.h"
 #include "my_assembler.h"
 
 static void help();
 static struct string* get_strings(const char* SOURCE_FILE_NAME, char** text, int* num_of_lines, int* error);
+static char* get_filename(const char* source_file, const char* addition);
 
 enum err{
     OK = 0,
@@ -19,15 +21,15 @@ int main(int argc, const char* argv[])
 {
     int error = 0;
 
-    if(argc != 3)
+    if(argc != 2)
     {
         help();
         return 0;
     }
 
     const char* SOURCE_FILE_NAME = argv[1];
-    const char* BIN_FILE = argv[2];
-    const char* TXT_FILE = "Assembler/test.code";
+    char* BIN_FILE = get_filename(SOURCE_FILE_NAME, "bin");
+    char* TXT_FILE = get_filename(SOURCE_FILE_NAME, "code");
 
     char* text = nullptr;
     int num_of_lines = 0;
@@ -87,6 +89,8 @@ int main(int argc, const char* argv[])
     }
 
     exit:
+    free(BIN_FILE);
+    free(TXT_FILE);
     fclose(file_asm_txt);
     fclose(file_asm_bin);
     free(link_positions);
@@ -98,8 +102,8 @@ int main(int argc, const char* argv[])
 
 static void help()
 {
-    printf("a.out [NAME_OF_SOURCE_FILE] [NAME_OF_BIN_FILE]\n");
-    printf("a.out Assembler/test.asm Assembler/test.bin  (default)\n");
+    printf("a.out [NAME_OF_SOURCE_FILE]\n");
+    printf("a.out Assembler/test.asm (default)\n");
 }
 
 static struct string* get_strings(const char* SOURCE_FILE_NAME, char** text, int* num_of_lines, int* error)
@@ -119,5 +123,25 @@ static struct string* get_strings(const char* SOURCE_FILE_NAME, char** text, int
 
     struct string* strings = begin_of_str_position(*text, size_symbols, num_of_lines);
     return strings;
+}
+
+static char* get_filename(const char* source_filename, const char* addition)
+{
+    char* new_filename = (char*)calloc(strlen(source_filename) + 5, sizeof(char));
+    const char* point_position = source_filename + strlen(source_filename);
+    for( ;point_position != source_filename; point_position--)
+    {
+        if(*point_position == '.')
+            break;
+    }
+    if(point_position == source_filename) // файл без расширения
+    {
+
+    }
+
+    strncpy(new_filename, source_filename, point_position - source_filename + 1);
+    *(new_filename + (point_position - source_filename) + 1) = '\0';
+    strcat(new_filename, addition);
+    return new_filename;
 }
 
