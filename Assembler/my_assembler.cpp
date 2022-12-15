@@ -137,7 +137,7 @@ bool convertor(
             }
             break;
 
-            case HLT: case OUT: case POP: case ADD: case SUB: case MUL: case DIV: case RET: case SQRT: //0 argument command
+            case HLT: case OUT: case POP: case ADD: case SUB: case MUL: case DIV: case RET: case SQRT: case IN: //0 argument command
             {
                 fprintf(file_txt, "%d", code_buffer);
 

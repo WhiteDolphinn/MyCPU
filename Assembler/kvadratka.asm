@@ -1,8 +1,8 @@
-push 1
+in   //push 1
 pop ax
-push 1
+in      //push 2
 pop bx
-push -6
+in      //push 1
 pop cx
 
 call :disc  //disc to dx

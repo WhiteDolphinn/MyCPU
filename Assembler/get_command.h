@@ -16,3 +16,4 @@
         DEFCMD(CALL, 17)
         DEFCMD(RET, 18)
         DEFCMD(SQRT, 19)
+        DEFCMD(IN, 20)

@@ -94,6 +94,20 @@ void execute_cmds(struct cpu* cpu)
                 stack_sqrt(&cpu->stk);
             break;
 
+            case IN:
+            {
+                double val = 0;
+                printf("Enter a value: ");
+                while(!scanf("%lf", &val))
+                    printf("Uncorrect input. Please, try again\n");
+
+                if(val >= 0)
+                    stack_push(&cpu->stk, (int)(val * 100 + 0.5));
+                else
+                    stack_push(&cpu->stk, (int)(val * 100 - 0.5));
+            }
+            break;
+
             case JMP: case JB: case JBE: case JA: case JAE: case JE: case JNE: case CALL: case RET:
             {
                 cmd_pos = execute_jump(cpu, cmd_pos);
