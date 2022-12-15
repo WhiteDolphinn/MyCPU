@@ -11,7 +11,7 @@
 
 #define EMIT(BUFF)                          \
     fprintf(file_txt, "%d ", BUFF);         \
-    data_bin[cur_data_position++] = BUFF;
+    data_bin[cur_data_position++] = BUFF
 
 struct link{
     char name[MAX_STR_LENGTH];

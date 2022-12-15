@@ -3,11 +3,15 @@
 #include "text.h"
 #include "my_assembler.h"
 
-void help();
+static void help();
+static struct string* get_strings(const char* SOURCE_FILE_NAME, char** text, int* num_of_lines, int* error);
+
 enum err{
     OK = 0,
     ERR_OP_SOURCE_FILE = 1,
     ERR_LINK_POSITIONS = 2,
+    ERR_OP_TXT_FILE = 3,
+    ERR_OP_BIN_FILE = 4,
 
 };
 
@@ -25,40 +29,35 @@ int main(int argc, const char* argv[])
     const char* BIN_FILE = argv[2];
     const char* TXT_FILE = "Assembler/test.code";
 
-    FILE* source_file = fopen(SOURCE_FILE_NAME, "rb");
-    if (!source_file)
-    {
-        printf("I can't open <%s>\n", SOURCE_FILE_NAME);
-        error = ERR_OP_SOURCE_FILE;
-        return 0;
-    }
-
-    char* text       = text_reader    (source_file, SOURCE_FILE_NAME);
-    int size_symbols = num_of_symbols (SOURCE_FILE_NAME);
-
-    fclose(source_file);
-
+    char* text = nullptr;
     int num_of_lines = 0;
-    struct string* strings = begin_of_str_position(text, size_symbols, &num_of_lines);
+    struct string* strings = get_strings(SOURCE_FILE_NAME, &text, &num_of_lines, &error);
+    if(strings == nullptr)
+    {
+        free(strings);
+        free(text);
+        return error;
+    }
 
     FILE* file_asm_txt = fopen(TXT_FILE, "w");
     FILE* file_asm_bin = fopen(BIN_FILE, "wb");
+     int* link_positions = (int*)calloc(NUM_OF_LINKS, sizeof(int));
 
     if(file_asm_txt == nullptr || file_asm_bin == nullptr)
     {
-        if(!file_asm_txt) printf("I can't open <%s> file\n", TXT_FILE);
-        if(!file_asm_bin) printf("I can't open <%s> file\n", BIN_FILE);
+        if(!file_asm_txt)
+        {
+            error = ERR_OP_TXT_FILE;
+            printf("I can't open <%s> file\n", TXT_FILE);
+        }
+        if(!file_asm_bin)
+        {
+            error = ERR_OP_BIN_FILE;
+            printf("I can't open <%s> file\n", BIN_FILE);
+        }
 
-        free(strings);
-        free(text);
-        fclose(file_asm_txt);
-        fclose(file_asm_bin);
-        return 0;
+        goto exit;
     }
-
-    int* link_positions = (int*)calloc(NUM_OF_LINKS, sizeof(int));
-
-    int uncorrect_line = 0;
 
     if(link_positions == nullptr)
     {
@@ -68,12 +67,9 @@ int main(int argc, const char* argv[])
         goto exit;
     }
 
-    /*for(int i = 0; i < NUM_OF_LINKS; i++)
-        link_positions[i] = -1;*/
-
-
     if(link_positions != nullptr)
     {
+        int uncorrect_line = 0;
         if(!convertor(file_asm_txt, file_asm_bin,  strings, num_of_lines, &uncorrect_line, link_positions, 1))
             printf("\n\nError in %d line!!!\n", uncorrect_line);
     }
@@ -83,8 +79,12 @@ int main(int argc, const char* argv[])
     file_asm_txt = fopen(TXT_FILE, "w");
     file_asm_bin = fopen(BIN_FILE, "wb");
 
-    if(!convertor(file_asm_txt, file_asm_bin,  strings, num_of_lines, &uncorrect_line, link_positions, 2))
-        printf("\n\nError in %d line!!!\n", uncorrect_line);
+    if(link_positions != nullptr)
+    {
+        int uncorrect_line = 0;
+        if(!convertor(file_asm_txt, file_asm_bin,  strings, num_of_lines, &uncorrect_line, link_positions, 2))
+            printf("\n\nError in %d line!!!\n", uncorrect_line);
+    }
 
     exit:
     fclose(file_asm_txt);
@@ -96,9 +96,28 @@ int main(int argc, const char* argv[])
     return error;
 }
 
-void help()
+static void help()
 {
     printf("a.out [NAME_OF_SOURCE_FILE] [NAME_OF_BIN_FILE]\n");
     printf("a.out Assembler/test.asm Assembler/test.bin  (default)\n");
+}
+
+static struct string* get_strings(const char* SOURCE_FILE_NAME, char** text, int* num_of_lines, int* error)
+{
+    FILE* source_file = fopen(SOURCE_FILE_NAME, "rb");
+    if (!source_file)
+    {
+        printf("I can't open <%s>\n", SOURCE_FILE_NAME);
+        *error = ERR_OP_SOURCE_FILE;
+        return nullptr;
+    }
+
+    *text       = text_reader    (source_file, SOURCE_FILE_NAME);
+    int size_symbols = num_of_symbols (SOURCE_FILE_NAME);
+
+    fclose(source_file);
+
+    struct string* strings = begin_of_str_position(*text, size_symbols, num_of_lines);
+    return strings;
 }
 

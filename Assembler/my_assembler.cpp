@@ -71,10 +71,9 @@ bool convertor(
         if(code_buffer == PUSH || code_buffer == POP)
             if(check_regist_command(strings[i].position, &code_buffer, &arg_reg))
             {
-                fprintf(file_txt, "%d", code_buffer);
-                data_bin[cur_data_position++] = code_buffer;
-                data_bin[cur_data_position++] = arg_reg;
-                fprintf(file_txt, " %d\n", arg_reg);
+                EMIT(code_buffer);
+                EMIT(arg_reg);
+                fprintf(file_txt, "\n");
                 continue;
             }
 
@@ -92,10 +91,8 @@ bool convertor(
                 else
                     arg_i = (int)(arg_d * 100 - 0.5);
 
-                fprintf(file_txt, "%d", PUSH);
-                data_bin[cur_data_position++] = PUSH;
-                data_bin[cur_data_position++] = arg_i;
-                fprintf(file_txt, " %d", arg_i);
+                EMIT(PUSH);
+                EMIT(arg_i);
             }
             break;
 
@@ -113,8 +110,7 @@ bool convertor(
                 if(sscanf(strings[i].position + strlen(cmd_buffer), " %c%s", &first_symbol, func.name) != 2)
                     return false;
 
-                fprintf(file_txt, "%d", code_buffer);
-                data_bin[cur_data_position++] = code_buffer;
+                EMIT(code_buffer);
 
                 if(is_link)
                 {
@@ -132,19 +128,16 @@ bool convertor(
                 if(!is_empty_string(func_pos + strlen(func.name) + 1))
                     return false;
 
-                data_bin[cur_data_position++] = func.code;
-                fprintf(file_txt, " %d", func.code);
+                EMIT(func.code);
             }
             break;
 
             case HLT: case OUT: case POP: case ADD: case SUB: case MUL: case DIV: case RET: case SQRT: case IN: //0 argument command
             {
-                fprintf(file_txt, "%d", code_buffer);
-
                 if(!is_empty_string(strings[i].position + strlen(cmd_buffer)))
                     return false;
 
-                data_bin[cur_data_position++] = code_buffer;
+                EMIT(code_buffer);
             }
             break;
 
