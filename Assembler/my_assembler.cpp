@@ -29,6 +29,7 @@ bool convertor(
         static struct link links[NUM_OF_LINKS] = {};
 
         sscanf(strings[i].position, " %14s", cmd_buffer);
+        printf("%s\n", cmd_buffer);
 
         if(is_empty_string(cmd_buffer))
         {
@@ -38,18 +39,10 @@ bool convertor(
 
         if(is_link_string(cmd_buffer))
         {
-            /*int link_num = 0;
-            sscanf(cmd_buffer, " :%d", &link_num);
-            add_link(link_num, cur_data_position, link_positions);
-            fprintf(file_txt, "\n");
-            continue;*/
             static int cur_link_num = 0;
-
-
             char link_name[MAX_STR_LENGTH] = "";
             sscanf(cmd_buffer, " :%s ", link_name);
-           // links[cur_link_num++] = {link_name, cur_link_num};
-          //  links[cur_link_num].name = link_name;
+
             links[cur_link_num].code = cur_link_num;
 
             for(int i = 0; link_name[i] != '\0'; i++)
@@ -58,6 +51,9 @@ bool convertor(
             cur_link_num++;
             add_link(links[cur_link_num-1].code, cur_data_position, link_positions);
             printf("%d = link_positions[%d] %d\n", link_positions[cur_link_num-1], cur_link_num-1, cur_data_position);
+
+            if(!is_empty_string(strings[i].position + strlen(cmd_buffer)))
+                return false;
 
             fprintf(file_txt, "\n");
             continue;
@@ -106,7 +102,6 @@ bool convertor(
 
             case JMP: case JB: case JBE: case JA: case JAE: case JE: case JNE: case CALL:
             {
-               // int position = 0;
                 struct link func = {};
                 bool is_link = false;
                 char first_symbol = '\0';
@@ -115,9 +110,6 @@ bool convertor(
 
                 if(first_symbol == ':')
                     is_link = true;
-
-              /*  if(sscanf(strings[i].position + strlen(cmd_buffer), " %c%d", &first_symbol, &position) != 2)
-                    return false;*/
 
                 if(sscanf(strings[i].position + strlen(cmd_buffer), " %c%s", &first_symbol, func.name) != 2)
                     return false;
@@ -135,12 +127,11 @@ bool convertor(
                         if(func.code == -1)
                             return false;
                     }
-
-                  //  printf("%d ", position);
-                  //  position = link_positions[position];///надо конвертнуть
-                  //  printf("%d\n", position);
-                 //   printf("link_positions[%d] = %d\n", position, link_positions[position]);
                 }
+
+                char* func_pos = strchr(strings[i].position, ':');
+                if(!is_empty_string(func_pos + strlen(func.name) + 1))
+                    return false;
 
                 data_bin[cur_data_position++] = func.code;
                 fprintf(file_txt, " %d", func.code);
@@ -150,10 +141,8 @@ bool convertor(
             case HLT: case OUT: case POP: case ADD: case SUB: case MUL: case DIV: case RET: //0 argument command
             {
                 fprintf(file_txt, "%d", code_buffer);
-                char symbol = '\0';
-                sscanf(strings[i].position + strlen(cmd_buffer), " %c", &symbol);
 
-                if(symbol)
+                if(!is_empty_string(strings[i].position + strlen(cmd_buffer)))
                     return false;
 
                 data_bin[cur_data_position++] = code_buffer;
@@ -174,10 +163,22 @@ bool convertor(
 
 static bool is_empty_string(const char* str)
 {
-    if(*str == '\0')
-        return true;
+    char buf1 = 0;
+    char buf2 = 0;
+
+    sscanf(str, " %c", &buf1);
+
+    if(buf1)
+    {
+        sscanf(str, " %c%c", &buf1, &buf2);
+        if(buf1 == buf2 && buf1 == '/')
+            return true;
+        else
+            return false;
+    }
     else
-        return false;
+        return true;
+
 }
 
 static bool is_link_string(const char* str)
@@ -224,7 +225,7 @@ static int reg_cmd(const char* buf_reg)
 {
     int cmd_code = -1;
 
-    #define GETREG(REGIST, CODE)           \
+    #define GETREG(REGIST, CODE)                \
         if(!stricmp(buf_reg, TO_STR(REGIST)))   \
             cmd_code = REGIST;
     #include "get_regist.h"
