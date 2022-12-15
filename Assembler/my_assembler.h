@@ -4,9 +4,9 @@
 #include "text.h"
 
 #define ERROR 0xDED00DED
-#define NUM_OF_COMMANDS 20
-#define NUM_OF_LINKS 5
-#define REGISTER_COUNT 5
+#define NUM_OF_COMMANDS 25
+#define NUM_OF_LINKS 50
+#define REGISTER_COUNT 6
 #define TO_STR(VAL) #VAL
 
 #define EMIT(BUFF)                          \
@@ -34,7 +34,7 @@ enum cmd{
 enum regist{
     #include "get_regist.h"
     #undef GETREG
-     //REGISTER_COUNT == 5
+     //REGISTER_COUNT == 6
 };
 
 bool convertor(

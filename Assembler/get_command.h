@@ -15,3 +15,4 @@
         DEFCMD(JNE, 14)
         DEFCMD(CALL, 17)
         DEFCMD(RET, 18)
+        DEFCMD(SQRT, 19)

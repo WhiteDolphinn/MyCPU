@@ -29,7 +29,6 @@ bool convertor(
         static struct link links[NUM_OF_LINKS] = {};
 
         sscanf(strings[i].position, " %14s", cmd_buffer);
-        printf("%s\n", cmd_buffer);
 
         if(is_empty_string(cmd_buffer))
         {
@@ -138,7 +137,7 @@ bool convertor(
             }
             break;
 
-            case HLT: case OUT: case POP: case ADD: case SUB: case MUL: case DIV: case RET: //0 argument command
+            case HLT: case OUT: case POP: case ADD: case SUB: case MUL: case DIV: case RET: case SQRT: //0 argument command
             {
                 fprintf(file_txt, "%d", code_buffer);
 

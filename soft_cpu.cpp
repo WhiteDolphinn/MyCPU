@@ -90,6 +90,10 @@ void execute_cmds(struct cpu* cpu)
             case HLT:
                 return;
 
+            case SQRT:
+                stack_sqrt(&cpu->stk);
+            break;
+
             case JMP: case JB: case JBE: case JA: case JAE: case JE: case JNE: case CALL: case RET:
             {
                 cmd_pos = execute_jump(cpu, cmd_pos);
