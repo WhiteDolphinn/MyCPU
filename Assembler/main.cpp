@@ -102,7 +102,7 @@ int main(int argc, const char* argv[])
 
 static void help()
 {
-    printf("a.out [NAME_OF_SOURCE_FILE]\n");
+    printf("a.out [NAME_OF_SOURCE_.ASM__FILE]\n");
     printf("a.out Assembler/test.asm (default)\n");
 }
 

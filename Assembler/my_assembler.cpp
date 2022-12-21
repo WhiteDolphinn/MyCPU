@@ -49,7 +49,7 @@ bool convertor(
 
             cur_link_num++;
             add_link(links[cur_link_num-1].code, cur_data_position, link_positions);
-            printf("%d = link_positions[%d] %d\n", link_positions[cur_link_num-1], cur_link_num-1, cur_data_position);
+            //printf("%d = link_positions[%d] %d\n", link_positions[cur_link_num-1], cur_link_num-1, cur_data_position);
 
             if(!is_empty_string(strings[i].position + strlen(cmd_buffer)))
                 return false;
@@ -115,7 +115,7 @@ bool convertor(
                 if(is_link)
                 {
                     get_func_code(&func, links, link_positions);
-                    printf("func.code = %d\n", func.code);
+                   // printf("func.code = %d\n", func.code);
 
                      if(mode == 2)
                     {
