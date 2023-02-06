@@ -21,12 +21,12 @@ bool convertor(
 {
     int data_bin[num_of_lines * 2] = {};/////
     int cur_data_position = 0;
+    static struct link links[NUM_OF_LINKS] = {};
 
     for (int i = 0; i < num_of_lines - 1; i++)
     {
         *uncorrect_line = i + 1;
         char cmd_buffer[MAX_STR_LENGTH] = "";
-        static struct link links[NUM_OF_LINKS] = {};
 
         sscanf(strings[i].position, " %14s", cmd_buffer);
 
@@ -115,8 +115,7 @@ bool convertor(
                 {
                     get_func_code(&func, links, link_positions);
 
-
-                     if(mode == 2)
+                    if(mode == 2)
                     {
                         if(func.code == -1)
                             return false;
@@ -162,10 +161,7 @@ static bool is_empty_string(const char* str)
     if(buf1)
     {
         sscanf(str, " %c%c", &buf1, &buf2);
-        if(buf1 == buf2 && buf1 == '/')
-            return true;
-        else
-            return false;
+        return (buf1 == buf2) && (buf1 == '/');
     }
     else
         return true;
@@ -174,10 +170,7 @@ static bool is_empty_string(const char* str)
 
 static bool is_link_string(const char* str)
 {
-    if(*str == ':')
-        return true;
-    else
-        return false;
+    return *str == ':';
 }
 
 static void add_link(int link_num, int cur_data_position, int* link_positions)

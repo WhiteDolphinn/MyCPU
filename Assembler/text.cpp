@@ -30,7 +30,7 @@ int num_of_lines(char* text)
 char* text_reader(FILE* file, const char* name_of_file)
 {
     const int SIZE = num_of_symbols(name_of_file);
-    char* text = (char*)calloc(SIZE+10, sizeof(char));
+    char* text = (char*)calloc(SIZE+1, sizeof(char));
 
     if(text == nullptr)
     {
@@ -39,7 +39,7 @@ char* text_reader(FILE* file, const char* name_of_file)
     }
     int size_text = fread(text, sizeof(char), SIZE, file);
 
-    char* temp = (char*)realloc(text, sizeof(char) * size_text + 10);
+    char* temp = (char*)realloc(text, sizeof(char) * size_text + 1);
 
     if(temp == nullptr)
     {

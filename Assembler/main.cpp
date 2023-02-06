@@ -7,6 +7,7 @@
 static void help();
 static struct string* get_strings(const char* SOURCE_FILE_NAME, char** text, int* num_of_lines, int* error);
 static char* get_filename(const char* source_file, const char* addition);
+static bool check_openings_of_files(FILE* file1, FILE* file2, char* file1_name, char* file2_name, int* error);
 
 enum err{
     OK = 0,
@@ -43,23 +44,10 @@ int main(int argc, const char* argv[])
 
     FILE* file_asm_txt = fopen(TXT_FILE, "w");
     FILE* file_asm_bin = fopen(BIN_FILE, "wb");
-     int* link_positions = (int*)calloc(NUM_OF_LINKS, sizeof(int));
+    int* link_positions = (int*)calloc(NUM_OF_LINKS, sizeof(int));
 
-    if(file_asm_txt == nullptr || file_asm_bin == nullptr)
-    {
-        if(!file_asm_txt)
-        {
-            error = ERR_OP_TXT_FILE;
-            printf("I can't open <%s> file\n", TXT_FILE);
-        }
-        if(!file_asm_bin)
-        {
-            error = ERR_OP_BIN_FILE;
-            printf("I can't open <%s> file\n", BIN_FILE);
-        }
-
+    if(!check_openings_of_files(file_asm_txt, file_asm_bin, TXT_FILE, BIN_FILE, &error))
         goto exit;
-    }
 
     if(link_positions == nullptr)
     {
@@ -69,25 +57,25 @@ int main(int argc, const char* argv[])
         goto exit;
     }
 
-    if(link_positions != nullptr)
     {
-        int uncorrect_line = 0;
-        if(!convertor(file_asm_txt, file_asm_bin,  strings, num_of_lines, &uncorrect_line, link_positions, 1))
-            printf("\n\nError in %d line!!!\n", uncorrect_line);
-    }
+    int uncorrect_line = 0;
+    if(!convertor(file_asm_txt, file_asm_bin,  strings, num_of_lines, &uncorrect_line, link_positions, 1))
+        printf("\n\nError in %d line!!!\n", uncorrect_line);
+
 
     fclose(file_asm_txt);
     fclose(file_asm_bin);
     file_asm_txt = fopen(TXT_FILE, "w");
     file_asm_bin = fopen(BIN_FILE, "wb");
 
-    if(link_positions != nullptr)
-    {
-        int uncorrect_line = 0;
-        if(!convertor(file_asm_txt, file_asm_bin,  strings, num_of_lines, &uncorrect_line, link_positions, 2))
-            printf("\n\nError in %d line!!!\n", uncorrect_line);
-    }
+    if(!check_openings_of_files(file_asm_txt, file_asm_bin, TXT_FILE, BIN_FILE, &error))
+        goto exit;
 
+    uncorrect_line = 0;
+    if(!convertor(file_asm_txt, file_asm_bin,  strings, num_of_lines, &uncorrect_line, link_positions, 2))
+       printf("\n\nError in %d line!!!\n", uncorrect_line);
+
+    }
     exit:
     free(BIN_FILE);
     free(TXT_FILE);
@@ -102,8 +90,7 @@ int main(int argc, const char* argv[])
 
 static void help()
 {
-    printf("a.out [NAME_OF_SOURCE_.ASM__FILE]\n");
-    printf("a.out Assembler/test.asm (default)\n");
+    printf("<name_of_source_file>\t\tName of the assembler code file\n");
 }
 
 static struct string* get_strings(const char* SOURCE_FILE_NAME, char** text, int* num_of_lines, int* error)
@@ -127,7 +114,7 @@ static struct string* get_strings(const char* SOURCE_FILE_NAME, char** text, int
 
 static char* get_filename(const char* source_filename, const char* addition)
 {
-    char* new_filename = (char*)calloc(strlen(source_filename) + 5, sizeof(char));
+    char* new_filename = (char*)calloc(strlen(source_filename) + strlen(addition), sizeof(char));
     const char* point_position = source_filename + strlen(source_filename);
     for( ;point_position != source_filename; point_position--)
     {
@@ -135,9 +122,7 @@ static char* get_filename(const char* source_filename, const char* addition)
             break;
     }
     if(point_position == source_filename) // файл без расширения
-    {
-
-    }
+        point_position = source_filename + strlen(source_filename);
 
     strncpy(new_filename, source_filename, point_position - source_filename + 1);
     *(new_filename + (point_position - source_filename) + 1) = '\0';
@@ -145,3 +130,21 @@ static char* get_filename(const char* source_filename, const char* addition)
     return new_filename;
 }
 
+static bool check_openings_of_files(FILE* file1, FILE* file2, char* file1_name, char* file2_name, int* error)
+{
+    if(file1 == nullptr || file2 == nullptr)
+    {
+        if(!file1)
+        {
+            *error = ERR_OP_TXT_FILE;
+            printf("I can't open <%s> file\n", file1_name);
+        }
+        if(!file2)
+        {
+            *error = ERR_OP_BIN_FILE;
+            printf("I can't open <%s> file\n", file2_name);
+        }
+        return false;
+    }
+    return true;
+}
