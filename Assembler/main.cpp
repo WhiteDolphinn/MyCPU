@@ -62,7 +62,6 @@ int main(int argc, const char* argv[])
     if(!convertor(file_asm_txt, file_asm_bin,  strings, num_of_lines, &uncorrect_line, link_positions, 1))
         printf("\n\nError in %d line!!!\n", uncorrect_line);
 
-
     fclose(file_asm_txt);
     fclose(file_asm_bin);
     file_asm_txt = fopen(TXT_FILE, "w");

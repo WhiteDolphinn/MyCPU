@@ -30,8 +30,5 @@ int main(int argc, const char* argv[])
 
 static void help()
 {
-    //printf("You should write name of  .bin file after the ./a.out\n");
-    //printf("./a.out <name_of_source_file>\n");
-    //printf("Assembler/test.bin (default)\n");
     printf("<name_of_source_file>\t\tName of the .bin file with bin-code\n");
 }
