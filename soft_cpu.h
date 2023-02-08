@@ -4,8 +4,6 @@
 #include "stack.h"
 #include "my_assembler.h"
 
-
-
 struct cpu{
     struct stack stk;
     int* commands;

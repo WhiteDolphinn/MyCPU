@@ -24,7 +24,6 @@ int main(int argc, const char* argv[])
     execute_cmds(&cpu);
 
     stop_cpu(&cpu);
-    //close_log_file();
     return 0;
 }
 

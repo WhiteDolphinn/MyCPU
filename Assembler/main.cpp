@@ -72,7 +72,7 @@ int main(int argc, const char* argv[])
 
     uncorrect_line = 0;
     if(!convertor(file_asm_txt, file_asm_bin,  strings, num_of_lines, &uncorrect_line, link_positions, 2))
-       printf("\n\nError in %d line!!!\n", uncorrect_line);
+        printf("\n\nError in %d line!!!\n", uncorrect_line);
 
     }
     exit:
@@ -92,18 +92,18 @@ static void help()
     printf("<name_of_source_file>\t\tName of the assembler code file\n");
 }
 
-static struct string* get_strings(const char* SOURCE_FILE_NAME, char** text, int* num_of_lines, int* error)
+static struct string* get_strings(const char* source_file_name, char** text, int* num_of_lines, int* error)
 {
-    FILE* source_file = fopen(SOURCE_FILE_NAME, "rb");
+    FILE* source_file = fopen(source_file_name, "rb");
     if (!source_file)
     {
-        printf("I can't open <%s>\n", SOURCE_FILE_NAME);
+        printf("I can't open <%s>\n", source_file_name);
         *error = ERR_OP_SOURCE_FILE;
         return nullptr;
     }
 
-    *text       = text_reader    (source_file, SOURCE_FILE_NAME);
-    int size_symbols = num_of_symbols (SOURCE_FILE_NAME);
+    *text = text_reader(source_file, source_file_name);
+    int size_symbols = num_of_symbols(source_file_name);
 
     fclose(source_file);
 
