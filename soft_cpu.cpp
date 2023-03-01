@@ -31,6 +31,7 @@ void start_cpu(struct cpu* cpu, int* commands)
     for(int i = 0; i < REGISTER_COUNT; i++)
         cpu->registers[i] = POISON;
 
+    cpu->RAM = (element_t*)calloc(SIZE_RAM, sizeof(element_t));
     cpu->commands = commands;
 
     stack_init(&cpu->stk);
@@ -39,6 +40,7 @@ void start_cpu(struct cpu* cpu, int* commands)
 void stop_cpu(struct cpu* cpu)
 {
     free(cpu->commands);
+    free(cpu->RAM);
     stack_delete(&cpu->stk);
 }
 

@@ -4,10 +4,9 @@
 
 static bool is_empty_string(const char* str);
 static bool is_link_string(const char* str);
-static void add_link(int link_num, int cur_data_position, int* link_positions);
 static bool check_regist_command(const char* str, int* code_buffer, int* code_reg);
 static int reg_cmd(const char* buf_reg);
-static void get_func_code(struct link* func, struct link* links, int* link_positions);
+static void get_func_code(struct link* func, char links[][NUM_OF_LINKS], int* link_positions);
 
 bool convertor(
                FILE* file_txt,
@@ -21,12 +20,12 @@ bool convertor(
 {
     int data_bin[num_of_lines * 2] = {};/////
     int cur_data_position = 0;
+    static char links[MAX_STR_LENGTH][NUM_OF_LINKS] = {};
 
     for (int i = 0; i < num_of_lines - 1; i++)
     {
         *uncorrect_line = i + 1;
         char cmd_buffer[MAX_STR_LENGTH] = "";
-        static struct link links[NUM_OF_LINKS] = {};
 
         sscanf(strings[i].position, " %14s", cmd_buffer);
 
@@ -42,20 +41,18 @@ bool convertor(
             char link_name[MAX_STR_LENGTH] = "";
             sscanf(cmd_buffer, " :%s ", link_name);
 
-            links[cur_link_num].code = cur_link_num;
-
             for(int i = 0; link_name[i] != '\0'; i++)
-                links[cur_link_num].name[i] = link_name[i];
+                links[cur_link_num][i] = link_name[i];
 
+            link_positions[cur_link_num] = cur_data_position;
             cur_link_num++;
-            add_link(links[cur_link_num-1].code, cur_data_position, link_positions);
-            printf("%d = link_positions[%d] %d\n", link_positions[cur_link_num-1], cur_link_num-1, cur_data_position);
 
             if(!is_empty_string(strings[i].position + strlen(cmd_buffer)))
                 return false;
 
             fprintf(file_txt, "\n");
             continue;
+
         }
 
         #define DEFCMD(COMMAND, CODE)                    \
@@ -115,13 +112,9 @@ bool convertor(
                 if(is_link)
                 {
                     get_func_code(&func, links, link_positions);
-                    printf("func.code = %d\n", func.code);
 
-                     if(mode == 2)
-                    {
-                        if(func.code == -1)
-                            return false;
-                    }
+                    if(mode == 2 && func.code == -1)
+                        return false;
                 }
 
                 char* func_pos = strchr(strings[i].position, ':');
@@ -163,10 +156,7 @@ static bool is_empty_string(const char* str)
     if(buf1)
     {
         sscanf(str, " %c%c", &buf1, &buf2);
-        if(buf1 == buf2 && buf1 == '/')
-            return true;
-        else
-            return false;
+        return (buf1 == buf2) && (buf1 == '/');
     }
     else
         return true;
@@ -175,15 +165,7 @@ static bool is_empty_string(const char* str)
 
 static bool is_link_string(const char* str)
 {
-    if(*str == ':')
-        return true;
-    else
-        return false;
-}
-
-static void add_link(int link_num, int cur_data_position, int* link_positions)
-{
-    link_positions[link_num] = cur_data_position;
+    return *str == ':';
 }
 
 static bool check_regist_command(const char* str, int* code_buffer, int* code_reg)
@@ -227,12 +209,14 @@ static int reg_cmd(const char* buf_reg)
     return cmd_code;
 }
 
-static void get_func_code(struct link* func, struct link* links, int* link_positions)
+static void get_func_code(struct link* func, char links[][NUM_OF_LINKS], int* link_positions)
 {
     for(int i = 0; i < NUM_OF_LINKS; i++)
-        if(!stricmp(links[i].name, func->name))
+    {
+        if(!stricmp(links[i],func->name))
         {
-            func->code = link_positions[links[i].code];
+            func->code = link_positions[i];
             return;
         }
+    }
 }

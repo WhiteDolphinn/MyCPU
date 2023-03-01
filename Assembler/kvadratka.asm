@@ -9,19 +9,38 @@ call :disc  //disc to dx
 
 push dx
 push 0
-jbe :posit_disc
+je :null_disc
 
+push dx
+push 0
+jbe :posit_disc
 jmp :neg_disc
+
+:exit8sol
+push 888
+out
+hlt
 
 :exit2sol
 push fx
 out
+
 :exit1sol
 push ex
 out         //push dx
 hlt
 
 :lin_solve
+push ax
+push ax
+mul
+push bx
+push bx
+mul
+add
+push 0
+je :exit888sol
+
 push ax
 push bx
 push -1
@@ -84,3 +103,13 @@ jmp :exit2sol
 push 2281337
 out
 hlt
+
+:null_disc
+push 2
+push ax
+mul
+pop ax
+
+call :lin_solve
+jmp :exit1sol
+

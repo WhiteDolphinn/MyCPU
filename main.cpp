@@ -24,13 +24,10 @@ int main(int argc, const char* argv[])
     execute_cmds(&cpu);
 
     stop_cpu(&cpu);
-    //close_log_file();
     return 0;
 }
 
 static void help()
 {
-    printf("You should write name of file after the ./a.out\n");
-    printf("./a.out \"name_of_source_file\"\n");
-    printf("Assembler/test.bin (default)\n");
+    printf("<name_of_source_file>\t\tName of the .bin file with bin-code\n");
 }
