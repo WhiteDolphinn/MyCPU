@@ -14,8 +14,7 @@ int* read_source_file(const char* name_of_source_file)
 
     if(source_file == nullptr)
     {
-        printf("I can't open file: <%s>", name_of_source_file);
-        fclose(source_file);
+        printf("I can't open file: <%s>\n", name_of_source_file);
         return nullptr;
     }
 

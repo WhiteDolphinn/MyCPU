@@ -18,6 +18,9 @@ int main(int argc, const char* argv[])
     const char* name_of_source_file = argv[1];
     int* commands = read_source_file(name_of_source_file);
 
+    if(commands == nullptr)
+        return 0;
+
     struct cpu cpu;
     start_cpu(&cpu, commands);
 

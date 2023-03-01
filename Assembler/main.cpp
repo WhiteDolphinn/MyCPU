@@ -39,6 +39,8 @@ int main(int argc, const char* argv[])
     {
         free(strings);
         free(text);
+        free(BIN_FILE);
+        free(TXT_FILE);
         return error;
     }
 
