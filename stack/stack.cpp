@@ -12,7 +12,7 @@ void stack_init(struct stack* stack)
     stack->size = 10;
     stack->hash = 10 * SHORT_POISON;
 
-    stack->data = (element_t*)malloc(stack->size * sizeof(element_t) + 2 * sizeof(unsigned int));
+    stack->data = (element_t*)malloc((size_t)stack->size * sizeof(element_t) + 2 * sizeof(unsigned int));
 
     unsigned int* stack_data_int = (unsigned int*)stack->data; //left_canary
     stack_data_int[0] = LEFT_DATA_CANARY;
@@ -81,12 +81,7 @@ element_t stack_pop(struct stack* stack)
     stack->hash += SHORT_POISON;
     stack->hash -= last_element;
 
-    /*if(stack->size - stack->depth == 10)
-    {
-        stack->size -= 5;
-        stack_resize(stack);
-    }*/
-        stack_check(stack);
+    stack_check(stack);
     return last_element;
 }
 
@@ -96,10 +91,10 @@ void stack_print(FILE* file, struct stack* stack)
     fprintf(file, "========================\n");
     for(int i = 0; i < stack->size; i++)
     {
-        if(stack->data[i] != (int)POISON)
+        if(stack->data[i] != POISON)
             fprintf(file, "%d:  %d\n", i, stack -> data[i]);
         else
-            fprintf(file, "%d: %X\n", i, stack->data[i]);
+            fprintf(file, "%d: %X\n", i, (unsigned)POISON);
     }
     fprintf(file, "========================\n\n");
     fprintf(file, "\033[0m");
@@ -116,9 +111,9 @@ void stack_dump(
     stack_print(file, stack);
 
     void* arr[10] = {0};
-    size_t size = backtrace(arr, 10);
+    size_t size = (size_t)backtrace(arr, 10);
 
-    char** logs = backtrace_symbols(arr, size);
+    char** logs = backtrace_symbols(arr, (int)size);
     fprintf(file, "\033[31m");
     for(size_t i = 0; i < size; i++)
         fprintf(file, "%s\n", logs[i]);
@@ -137,7 +132,7 @@ void stack_resize(struct stack* stack, int extra_mem)
 
     stack->is_resized = 1;
     stack->data -= sizeof(unsigned int) / sizeof(element_t);//////
-    stack->data = (element_t*)realloc(stack->data, (stack->size + extra_mem) * sizeof(element_t) + 2 * sizeof(unsigned int));
+    stack->data = (element_t*)realloc(stack->data, (size_t)(stack->size + extra_mem) * sizeof(element_t) + 2 * sizeof(unsigned int));
 
     if(stack->data != nullptr)
         stack->is_resized = 0;

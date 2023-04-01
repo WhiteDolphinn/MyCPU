@@ -12,7 +12,7 @@ int num_of_symbols(const char* name_of_file)
     if (stat(name_of_file, &st) == -1)
         return -1;
 
-    return st.st_size;
+    return (int)st.st_size;
 }
 
 int num_of_lines(char* text)
@@ -30,16 +30,16 @@ int num_of_lines(char* text)
 char* text_reader(FILE* file, const char* name_of_file)
 {
     const int SIZE = num_of_symbols(name_of_file);
-    char* text = (char*)calloc(SIZE+1, sizeof(char));
+    char* text = (char*)calloc((size_t)(SIZE+1), sizeof(char));
 
     if(text == nullptr)
     {
         printf("I can't read this file(((\n");
         return nullptr;
     }
-    int size_text = fread(text, sizeof(char), SIZE, file);
+    int size_text = (int)fread(text, sizeof(char), (size_t)SIZE, file);
 
-    char* temp = (char*)realloc(text, sizeof(char) * size_text + 1);
+    char* temp = (char*)realloc(text, sizeof(char) * (size_t)size_text + 1);
 
     if(temp == nullptr)
     {
@@ -54,7 +54,7 @@ char* text_reader(FILE* file, const char* name_of_file)
 struct string* begin_of_str_position(char* text, const int SIZE_SYMBOLS, int* SIZE_LINES)
 {
     *SIZE_LINES = num_of_lines(text);
-    struct string* pos_and_len = (struct string*)calloc(*SIZE_LINES+1, sizeof(struct string));
+    struct string* pos_and_len = (struct string*)calloc((size_t)(*SIZE_LINES+1), sizeof(struct string));
 
     if(pos_and_len == nullptr)
     {
@@ -97,11 +97,11 @@ int stricmp(const char* source1, const char* source2)
 {
     char lower_source1[MAX_STR_LENGTH] = "";
     for(int i = 0; source1[i]; i++)
-        lower_source1[i] = tolower(source1[i]);
+        lower_source1[i] = (char)tolower(source1[i]);
 
     char lower_source2[MAX_STR_LENGTH] = "";
     for(int i = 0; source2[i]; i++)
-        lower_source2[i] = tolower(source2[i]);
+        lower_source2[i] = (char)tolower(source2[i]);
 
     return strcmp(lower_source1, lower_source2);
 }

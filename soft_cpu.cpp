@@ -19,8 +19,8 @@ int* read_source_file(const char* name_of_source_file)
         return nullptr;
     }
 
-    int* commands = (int*)calloc(num_of_symbols(name_of_source_file), sizeof(int));
-    fread(commands, sizeof(int), num_of_symbols(name_of_source_file), source_file);
+    int* commands = (int*)calloc((size_t)num_of_symbols(name_of_source_file), sizeof(int));
+    fread(commands, sizeof(int), (size_t)num_of_symbols(name_of_source_file), source_file);
 
     fclose(source_file);
     return commands;
@@ -185,6 +185,8 @@ static int execute_jump(struct cpu* cpu, int cmd_pos)
         case JNE:
             is_true_condition = val1 != val2;
         break;
+
+        default: return -1;
     }
 
     if(is_true_condition == 1)
@@ -202,22 +204,16 @@ void print_cpu(struct cpu* cpu)
 
     fprintf(log_file, "****************************\n");
     for(int i = 0; i < REGISTER_COUNT; i++)
-        if(cpu->registers[i] == (int)POISON)
-            fprintf(log_file, "registers[%d] = %X\n", i, cpu->registers[i]);
+        if(cpu->registers[i] == POISON)
+            fprintf(log_file, "registers[%d] = %X\n", i, (unsigned)POISON);
         else
             fprintf(log_file, "registers[%d] = %d\n", i, cpu->registers[i]);
 
     fprintf(log_file, "****************************\n");
-    /*for(int i = 0; i < SIZE_RAM; i++)
-        if(cpu->RAM[i] == (int)POISON)
-            fprintf(log_file, "RAM[%d]:\t%X\n", i, cpu->RAM[i]);
-        else
-            fprintf(log_file, "RAM[%d]:\t%d\n", i, cpu->RAM[i]);*/
-
 
     for(int i = 0; i < SIZE_RAM; i++)
     {
-        if(cpu->RAM[i] == (int)POISON)
+        if(cpu->RAM[i] == POISON)
             fprintf(log_file, "p\t");
         else
             fprintf(log_file, "%d\t", cpu->RAM[i]);

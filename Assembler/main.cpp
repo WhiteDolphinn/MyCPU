@@ -125,7 +125,7 @@ static char* get_filename(const char* source_filename, const char* addition)
     if(point_position == source_filename) // файл без расширения
         point_position = source_filename + strlen(source_filename);
 
-    strncpy(new_filename, source_filename, point_position - source_filename + 1);
+    strncpy(new_filename, source_filename, (size_t)(point_position - source_filename + 1));
     *(new_filename + (point_position - source_filename) + 1) = '\0';
     strcat(new_filename, addition);
     return new_filename;

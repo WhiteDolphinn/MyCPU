@@ -19,7 +19,7 @@ bool convertor(
                int mode
                )
 {
-    int data_bin[num_of_lines * 2] = {};/////
+    int data_bin[(size_t)(num_of_lines * 2)] = {};/////
     int cur_data_position = 0;
     static char links[MAX_STR_LENGTH][NUM_OF_LINKS] = {};
 
@@ -42,8 +42,8 @@ bool convertor(
             char link_name[MAX_STR_LENGTH] = "";
             sscanf(cmd_buffer, " :%s ", link_name);
 
-            for(int i = 0; link_name[i] != '\0'; i++)
-                links[cur_link_num][i] = link_name[i];
+            for(int j = 0; link_name[j] != '\0'; j++)
+                links[cur_link_num][j] = link_name[j];
 
             link_positions[cur_link_num] = cur_data_position;
             cur_link_num++;
@@ -151,7 +151,7 @@ bool convertor(
         fprintf(file_txt, "\n");
     }
 
-    fwrite(data_bin, sizeof(int), cur_data_position, file_bin);
+    fwrite(data_bin, sizeof(int), (size_t)cur_data_position, file_bin);
 
     return true;
 }
@@ -197,6 +197,8 @@ static bool check_regist_command(const char* str, int* code_buffer, int* code_re
                 case POP:
                 *code_buffer = POP_R;
                 break;
+
+                default: return false;
             }
             return true;
         }

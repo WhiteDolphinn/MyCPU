@@ -88,7 +88,7 @@ static long long int sum_of_elements(struct stack* stack)
     long long int sum_of_elements = 0;
 
     for(int i = 0; i < stack->size; i++)
-        if(stack->data[i] == (int)POISON)
+        if(stack->data[i] == POISON)
             sum_of_elements += SHORT_POISON;
         else
             sum_of_elements += stack->data[i];

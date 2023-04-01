@@ -66,7 +66,7 @@ void stack_sqrt(struct stack* stack)
         return;
 
     int x = stack_pop(stack);
-    double res = (double)sqrt((double)x);
+    double res = sqrt((double)x);
     stack_push(stack, (int)(res * 10));
 
     stack_check(stack);
