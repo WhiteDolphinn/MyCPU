@@ -24,7 +24,9 @@ struct link{
 enum cmd{
     #include "get_command.h"
     PUSH_R = 15,
-    POP_R = 16,         //NUM_OF_COMMANDS == 20
+    POP_R = 16,         //NUM_OF_COMMANDS == 25
+    PUSH_RAM = 21,
+    POP_RAM = 22,
     #undef DEFCMD
 };
 

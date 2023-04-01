@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <unistd.h>
 #include "soft_cpu.h"
 #include "text.h"
 #include "maths.h"
@@ -30,7 +31,9 @@ void start_cpu(struct cpu* cpu, int* commands)
     for(int i = 0; i < REGISTER_COUNT; i++)
         cpu->registers[i] = POISON;
 
-    cpu->RAM = (element_t*)calloc(SIZE_RAM, sizeof(element_t));
+    for(int i = 0; i < SIZE_RAM; i++)
+        cpu->RAM[i] = POISON;
+
     cpu->commands = commands;
 
     stack_init(&cpu->stk);
@@ -39,7 +42,6 @@ void start_cpu(struct cpu* cpu, int* commands)
 void stop_cpu(struct cpu* cpu)
 {
     free(cpu->commands);
-    free(cpu->RAM);
     stack_delete(&cpu->stk);
 }
 
@@ -58,6 +60,13 @@ void execute_cmds(struct cpu* cpu)
                 stack_push(&cpu->stk, cpu->registers[cpu->commands[++cmd_pos]]);
             break;
 
+            case PUSH_RAM:
+            {
+                sleep(1);
+                stack_push(&cpu->stk, cpu->RAM[cpu->commands[++cmd_pos]]);
+                break;
+            }
+
             case OUT:
             {
                 printf("%.2lf\n", (double)stack_pop(&cpu->stk) / 100);
@@ -71,6 +80,13 @@ void execute_cmds(struct cpu* cpu)
             case POP_R:
                 cpu->registers[cpu->commands[++cmd_pos]] = stack_pop(&cpu->stk);
             break;
+
+            case POP_RAM:
+            {
+                sleep(1);
+                cpu->RAM[cpu->commands[++cmd_pos]] = stack_pop(&cpu->stk);
+                break;
+            }
 
             case ADD:
                 stack_add(&cpu->stk);
@@ -190,4 +206,24 @@ void print_cpu(struct cpu* cpu)
             fprintf(log_file, "registers[%d] = %X\n", i, cpu->registers[i]);
         else
             fprintf(log_file, "registers[%d] = %d\n", i, cpu->registers[i]);
+
+    fprintf(log_file, "****************************\n");
+    /*for(int i = 0; i < SIZE_RAM; i++)
+        if(cpu->RAM[i] == (int)POISON)
+            fprintf(log_file, "RAM[%d]:\t%X\n", i, cpu->RAM[i]);
+        else
+            fprintf(log_file, "RAM[%d]:\t%d\n", i, cpu->RAM[i]);*/
+
+
+    for(int i = 0; i < SIZE_RAM; i++)
+    {
+        if(cpu->RAM[i] == (int)POISON)
+            fprintf(log_file, "p\t");
+        else
+            fprintf(log_file, "%d\t", cpu->RAM[i]);
+
+        if((i + 1) % 16 == 0)
+            fprintf(log_file, "\n");
+    }
+    fprintf(log_file, "\n");
 }

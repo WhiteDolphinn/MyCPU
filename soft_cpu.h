@@ -4,13 +4,13 @@
 #include "stack.h"
 #include "my_assembler.h"
 
-#define SIZE_RAM 50
+#define SIZE_RAM 256
 
 struct cpu{
     struct stack stk;
     int* commands;
     element_t registers[REGISTER_COUNT];
-    element_t* RAM;
+    element_t RAM[SIZE_RAM];
 };
 
 int* read_source_file(const char* name_of_source_file);
